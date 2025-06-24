@@ -27,7 +27,7 @@ function Navbar() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("/route/user", {
+        const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/user`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

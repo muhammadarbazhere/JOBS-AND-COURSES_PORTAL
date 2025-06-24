@@ -28,7 +28,7 @@ function AddJobInternshipForm() {
     }
 
     try {
-      const response = await fetch('/route/jobs-internships/create', {
+      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/jobs-internships/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -12,7 +12,7 @@ const Job = () => {
     const fetchJobs = async () => {
         try {
             setLoading(true);
-            const response = await fetch("/route/jobs-internships/getAllJobs");
+            const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/jobs-internships/getAllJobs`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }

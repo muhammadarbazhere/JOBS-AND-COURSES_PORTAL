@@ -10,7 +10,7 @@ const AllUsers = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/route/allUsers", {
+        const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/allUsers`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -46,7 +46,7 @@ const AllUsers = () => {
 
     if (isConfirmed) {
       try {
-        const response = await fetch("/route/updateUserRole", {
+        const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/updateUserRole`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

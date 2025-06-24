@@ -31,7 +31,7 @@ const Dashboard = () => {
   const sendRequest = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/route/user", {
+      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/user`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("/route/logout", {
+      const res = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/logout`, {
         method: "POST",
         credentials: "include",
       });

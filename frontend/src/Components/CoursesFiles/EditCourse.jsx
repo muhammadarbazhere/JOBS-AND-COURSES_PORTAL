@@ -25,7 +25,7 @@ const EditCourse = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const response = await fetch(`/route/courses/getCourseById/${id}`);
+        const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/courses/getCourseById/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch course');
         }
@@ -75,7 +75,7 @@ const EditCourse = () => {
         formDataToSend.append("image", updateData.image);  // Append image file if it exists
       }
   
-      const response = await fetch(`/route/courses/updateCourse/${id}`, {
+      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/courses/updateCourse/${id}`, {
         method: 'PUT',
         body: formDataToSend,
       });

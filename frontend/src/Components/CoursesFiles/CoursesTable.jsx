@@ -16,7 +16,8 @@ const CoursesTable = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch("/route/courses/getCourses");
+      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/courses/getCourses`
+);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -31,7 +32,7 @@ const CoursesTable = () => {
   
   const handleDeleteCourse = async (id) => {
     try {
-      const response = await fetch(`/route/courses/deleteCourse/${id}`, {
+      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/courses/deleteCourse/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) {

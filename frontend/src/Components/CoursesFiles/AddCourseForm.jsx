@@ -46,7 +46,8 @@ function AddCourseForm() {
       formDataToSend.append("image", formData.image); // Append image file
 
       const response = await fetch(
-        "/route/courses/createCourse",
+
+        `${import.meta.env.FRONTEND_BASE_URL}/route/courses/createCourse`,
         {
           method: "POST",
           body: formDataToSend,

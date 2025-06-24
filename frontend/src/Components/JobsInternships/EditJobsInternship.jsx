@@ -20,7 +20,7 @@ function EditJobsInternship({ onClose }) {
 
   const fetchJobById = async (id) => {
     try {
-      const response = await fetch(`/route/jobs-internships/getJobById/${id}`);
+      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/jobs-internships/getJobById/${id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch job data');
       }
@@ -42,7 +42,7 @@ function EditJobsInternship({ onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/route/jobs-internships/update/${id}`, {
+      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/jobs-internships/update/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -44,7 +44,7 @@ const ProgressCards = () => {
     // Fetch user data from the backend
     const fetchUserData = async () => {
       try {
-        const response = await fetch('/route/allUsers', {
+        const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/allUsers`, {
           method: 'GET',
           credentials: 'include', // Include credentials for cookies
         });

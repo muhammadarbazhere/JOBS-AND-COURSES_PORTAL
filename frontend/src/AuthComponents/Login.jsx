@@ -30,7 +30,7 @@ function Login() {
     setError('');
 
     try {
-      const response = await fetch('/route/login', {
+      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

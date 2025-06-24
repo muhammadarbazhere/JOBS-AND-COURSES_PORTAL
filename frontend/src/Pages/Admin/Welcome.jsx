@@ -11,7 +11,7 @@ function Welcome() {
   const sendRequest = async () => {
     setLoading(true); // Set loading to true when sending request
     try {
-      const response = await fetch("/route/user", {
+      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/user`, {
         method: "GET",
         credentials: "include",
       });

@@ -8,7 +8,7 @@ const VerifyEmail = () => {
     useEffect(() => {
         const verifyEmail = async () => {
             try {
-                const response = await fetch(`/api/verify-email/${token}`, {
+                const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/api/verify-email/${token}`, {
                     method: 'GET',
                     credentials: 'include', // Ensure session cookies are sent with the request
                 });

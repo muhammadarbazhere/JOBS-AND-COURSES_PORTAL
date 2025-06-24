@@ -18,7 +18,7 @@ function Cart() {
   // Function to fetch cart items
   const fetchCartItems = async () => {
     try {
-      const response = await fetch("/route/cart/getUserCart", {
+      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/cart/getUserCart`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -55,7 +55,7 @@ function Cart() {
   const handleRemoveFromCart = async (courseId) => {
     try {
       const response = await fetch(
-        `/route/cart/deleteCart/${courseId}`,
+        `${import.meta.env.FRONTEND_BASE_URL}/route/cart/deleteCart/${courseId}`,
         {
           method: "DELETE",
           credentials: "include",
