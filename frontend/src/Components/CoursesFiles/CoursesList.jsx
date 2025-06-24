@@ -19,7 +19,7 @@ function Courses() {
   const fetchCourses = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/courses/getCourses`);
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/courses/getCourses`);
       if (!response.ok) {
         throw new Error('Failed to fetch courses');
       }
@@ -42,7 +42,7 @@ function Courses() {
 
   const handleAddToCart = async (course) => {
     try {
-      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/cart/addCart`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/cart/addCart`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ function Courses() {
               className="w-full sm:max-w-sm rounded-md overflow-hidden bg-white mb-6 border-2 border-white shadow-lg transform transition-all hover:scale-105"
             >
               <img
-               src={`${import.meta.env.FRONTEND_BASE_URL}/route/${course.image}`}
+               src={`${import.meta.env.VITE_API_BASE_URL}/route/${course.image}`}
                 className="w-full h-64 object-cover"
                 alt={course.title}
               />

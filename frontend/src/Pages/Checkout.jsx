@@ -36,7 +36,7 @@ function Checkout() {
 
   const fetchCartItems = async () => {
     try {
-      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/cart/getUserCart`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/cart/getUserCart`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -75,7 +75,7 @@ function Checkout() {
 
   const handleProceedForCredit = async () => {
     try {
-      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/payment/credit-card`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/payment/credit-card`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,7 +102,7 @@ function Checkout() {
 
   const handleProceedForPaypal = async () => {
     try {
-      const response = await fetch(`${import.meta.env.FRONTEND_BASE_URL}/route/payment/paypal`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/payment/paypal`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

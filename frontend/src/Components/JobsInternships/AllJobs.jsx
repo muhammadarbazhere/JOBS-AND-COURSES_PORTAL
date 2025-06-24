@@ -18,7 +18,7 @@ const AllJobs = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${import.meta.env.FRONTEND_BASE_URL}/route/jobs-internships/getAllJobs`
+        `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -35,7 +35,7 @@ const AllJobs = () => {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-        `${import.meta.env.FRONTEND_BASE_URL}/route/jobs-internships/delete/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/delete/${id}`,
         {
           method: "DELETE",
         }
@@ -62,7 +62,7 @@ const AllJobs = () => {
     try {
       const jobToEdit = jobs.find((job) => job._id === id);
       const response = await fetch(
-        `${import.meta.env.FRONTEND_BASE_URL}/route/jobs-internships/update/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/update/${id}`,
         {
           method: "PUT",
           headers: {

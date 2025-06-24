@@ -47,7 +47,7 @@ function AddCourseForm() {
 
       const response = await fetch(
 
-        `${import.meta.env.FRONTEND_BASE_URL}/route/courses/createCourse`,
+        `${import.meta.env.VITE_API_BASE_URL}/route/courses/createCourse`,
         {
           method: "POST",
           body: formDataToSend,

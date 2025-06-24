@@ -40,7 +40,7 @@ const JobApplyForm = () => {
       formDataForUpload.append("email", formData.email);
       formDataForUpload.append("resume", formData.resume);
   
-      const url = `${import.meta.env.FRONTEND_BASE_URL}/route/form/apply/${id}`; 
+      const url = `${import.meta.env.VITE_API_BASE_URL}/route/form/apply/${id}`; 
       
       try {
         const response = await fetch(url, {
