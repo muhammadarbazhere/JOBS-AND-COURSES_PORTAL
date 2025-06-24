@@ -47,10 +47,7 @@ app.use("/route/form", applyJobRoutes);
 // MongoDB connection
 async function connectDB() {
   try {
-    await mongoose.connect(process.env.MONGO_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGO_URL);
     console.log("MongoDB connection successful");
   } catch (error) {
     console.error("MongoDB connection error", error);
