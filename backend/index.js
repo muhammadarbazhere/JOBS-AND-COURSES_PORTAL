@@ -43,15 +43,6 @@ app.use("/route/cart", cartRoutes);
 app.use('/route/jobs-internships', jobInternshipRoutes);
 app.use("/route/form", applyJobRoutes);
 
-// Serve frontend static files (if deployed fullstack on Render)
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, "client/build")));
-
-  // Serve the React frontend for any unrecognized routes
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-  });
-}
 
 // MongoDB connection
 async function connectDB() {
