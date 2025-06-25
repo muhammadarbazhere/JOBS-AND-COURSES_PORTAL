@@ -16,7 +16,7 @@
     "@mui/lab": "^5.0.0-alpha.167",
     "@mui/material": "^5.17.1",
     "@reduxjs/toolkit": "^2.2.5",
-    "@types/react": "^17.0.80",
+    "@types/react": "^18.3.23",
     "axios": "^1.6.7",
     "d3-scale": "^4.0.2",
     "js-cookie": "^3.0.5",
