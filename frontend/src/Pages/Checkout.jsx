@@ -315,7 +315,7 @@ function Checkout() {
       >
         <div className="flex items-center gap-4">
           <img
-            src={`/route/${course.image}`}
+            src={`${import.meta.env.VITE_API_BASE_URL}/${course.image}`}
             alt={course.title}
             className="w-20 h-20 object-cover rounded-md"
           />

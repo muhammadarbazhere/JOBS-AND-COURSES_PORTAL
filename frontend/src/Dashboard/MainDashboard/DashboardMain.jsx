@@ -145,7 +145,7 @@ const Dashboard = () => {
             ) : user && user.image ? (
               <img
                 className="sm:w-28 w-10 border-2 border-white h-10 sm:h-28 rounded-full"
-                src={`/route/${user.image}`}
+                src={`${import.meta.env.VITE_API_BASE_URL}/${user.image}`}
                 alt="Profile"
               />
             ) : (

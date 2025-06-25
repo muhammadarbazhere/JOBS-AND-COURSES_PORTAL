@@ -141,7 +141,7 @@ function Cart() {
                   className="w-full mb-6 bg-white border-2 border-gray-200 rounded-md shadow-lg overflow-hidden flex flex-col sm:flex-row"
                 >
                   <img
-                    src={`/route/${course.image}`}
+                    src={`${import.meta.env.VITE_API_BASE_URL}/${course.image}`}
                     className="w-full sm:w-40 h-40 object-cover"
                     alt={course.title}
                   />

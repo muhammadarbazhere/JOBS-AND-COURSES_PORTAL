@@ -219,7 +219,7 @@ const EditCourse = () => {
               />
               {updateData.image && typeof updateData.image === 'string' && (
                 <div className="mt-3">
-                  <img src={`/route/${updateData.image}`} alt="Course" className="object-contain h-40 w-full" />
+                  <img src={`${import.meta.env.VITE_API_BASE_URL}/>${updateData.image}`} alt="Course" className="object-contain h-40 w-full" />
                 </div>
               )}
               {updateData.image && typeof updateData.image !== 'string' && (
