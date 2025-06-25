@@ -102,7 +102,11 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "3d" }
     );
-    res.cookie("token", token, { httpOnly: true, sameSite: "Strict",  secure: true  });
+    res.cookie("token", token, { httpOnly: true, sameSite: "Strict", 
+      
+    //  secure: true
+    
+    });
 
     // Send welcome back email
     const mailOptions = {
