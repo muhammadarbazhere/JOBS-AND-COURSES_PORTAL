@@ -20,10 +20,12 @@ function EditJobsInternship({ onClose }) {
 
   const fetchJobById = async (id) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getJobById/${id}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch job data');
+       const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getJobById/${id}`,
+      {
+        credentials: 'include', // ✅ Send JWT token cookie if protected
       }
+    );
       const data = await response.json();
       setFormData(data);
     } catch (error) {
@@ -47,6 +49,7 @@ function EditJobsInternship({ onClose }) {
         headers: {
           'Content-Type': 'application/json',
         },
+          credentials: 'include', // ✅ Required if route has verifyToken
         body: JSON.stringify(formData),
       });
       if (!response.ok) {

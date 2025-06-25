@@ -33,7 +33,8 @@ function AddJobInternshipForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData), // Corrected to send formData directly
+         credentials: 'include', // ✅ Important to send JWT token via cookies
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {

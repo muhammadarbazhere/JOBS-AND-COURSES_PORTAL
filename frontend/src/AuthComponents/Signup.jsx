@@ -50,6 +50,7 @@ function Signup() {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/signup`, {
         method: 'POST',
         body: formData,
+        credentials: 'include',
       });
 
       if (response.ok) {

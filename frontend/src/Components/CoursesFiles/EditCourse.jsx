@@ -5,7 +5,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import logo from '../../assets/logo.jpg';
 import { MdOutlineCancelPresentation } from "react-icons/md";
 
-
 const EditCourse = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,20 +16,24 @@ const EditCourse = () => {
     category: '',
     charges: '',
     duration: '',
-    image: null  // Change to null to handle file uploads
+    image: null
   });
 
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/courses/getCourseById/${id}`);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/route/courses/getCourseById/${id}`,
+          {
+            credentials: 'include' // ✅ Required to pass token
+          }
+        );
         if (!response.ok) {
           throw new Error('Failed to fetch course');
         }
         const data = await response.json();
-        // Update the state with the fetched course data
         setUpdateData({
           title: data.title,
           author: data.author,
@@ -38,9 +41,9 @@ const EditCourse = () => {
           category: data.category,
           charges: data.charges,
           duration: data.duration,
-          image: data.image  // Assuming this is the URL of the image
+          image: data.image // This is image URL from server
         });
-        setIsLoading(false); // Set loading to false after data is fetched
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching course:', error.message);
         toast.error('Error fetching course');
@@ -54,7 +57,7 @@ const EditCourse = () => {
     if (e.target.name === "image") {
       setUpdateData({
         ...updateData,
-        image: e.target.files[0]  // Update image to file object
+        image: e.target.files[0] // File object
       });
     } else {
       setUpdateData({ ...updateData, [e.target.name]: e.target.value });
@@ -72,13 +75,17 @@ const EditCourse = () => {
       formDataToSend.append("charges", updateData.charges);
       formDataToSend.append("duration", updateData.duration);
       if (updateData.image && typeof updateData.image !== 'string') {
-        formDataToSend.append("image", updateData.image);  // Append image file if it exists
+        formDataToSend.append("image", updateData.image);
       }
-  
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/courses/updateCourse/${id}`, {
-        method: 'PUT',
-        body: formDataToSend,
-      });
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/courses/updateCourse/${id}`,
+        {
+          method: 'PUT',
+          body: formDataToSend,
+          credentials: 'include' // ✅ Required
+        }
+      );
       if (!response.ok) {
         throw new Error('Failed to update course');
       }
@@ -90,12 +97,13 @@ const EditCourse = () => {
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>; // Show loading message while data is being fetched
-  }
   const handleCancelEdit = () => {
-    navigate("/MyCourseList"); // Navigate back to the course list page
+    navigate("/MyCourseList");
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="bg-blue-100 py-20">

@@ -49,7 +49,7 @@ function Backend() {
   const handleDeleteCourse = async (id) => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/courses/deleteCourse/${id}`, {
-        method: 'DELETE',
+        method: 'DELETE'
       });
       if (!response.ok) {
         throw new Error('Failed to delete course');
@@ -96,7 +96,7 @@ function Backend() {
               className="w-full sm:max-w-sm rounded-md overflow-hidden bg-white mb-6 border-2 border-white shadow-lg"
             >
               <img
-                src={`${import.meta.env.VITE_API_BASE_URL}/route/${course.image}`}
+                src={`${import.meta.env.VITE_API_BASE_URL}/${course.image}`}
                 className="w-full h-64 object-cover"
                 alt={course.title}
               />

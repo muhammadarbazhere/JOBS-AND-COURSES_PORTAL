@@ -18,8 +18,11 @@ const AllJobs = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`
-      );
+      `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`,
+      {
+        credentials: 'include', // ✅ Send token
+      }
+    );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -34,12 +37,13 @@ const AllJobs = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/delete/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+     const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/delete/${id}`,
+      {
+        method: "DELETE",
+        credentials: 'include', // ✅ Send token
+      }
+    );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -68,7 +72,8 @@ const AllJobs = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(jobToEdit),
+            credentials: 'include', // ✅ Send token
+        body: JSON.stringify(jobToEdit),
         }
       );
       if (!response.ok) {

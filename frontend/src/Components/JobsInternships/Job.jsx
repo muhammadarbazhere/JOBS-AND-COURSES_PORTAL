@@ -12,10 +12,16 @@ const Job = () => {
     const fetchJobs = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+             const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`,
+      {
+        credentials: 'include', // ✅ Add if the route is protected
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
             const data = await response.json();
             const filteredJobs = data.filter(item => item.jobOrInternship === 'job');
             setJobs(filteredJobs);

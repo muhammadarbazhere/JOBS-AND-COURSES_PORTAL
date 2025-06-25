@@ -51,6 +51,7 @@ function AddCourseForm() {
         {
           method: "POST",
           body: formDataToSend,
+           credentials: "include",
         }
       );
 

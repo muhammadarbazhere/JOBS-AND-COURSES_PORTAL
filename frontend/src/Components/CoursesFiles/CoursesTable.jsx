@@ -16,8 +16,12 @@ const CoursesTable = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/courses/getCourses`
-);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/courses/getCourses`,
+        {
+          credentials: "include", // ✅ Send cookies (token)
+        }
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -29,20 +33,25 @@ const CoursesTable = () => {
       setLoading(false);
     }
   };
-  
+
   const handleDeleteCourse = async (id) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/courses/deleteCourse/${id}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/courses/deleteCourse/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include", // ✅ Send cookies (token)
+        }
+      );
       if (!response.ok) {
-        throw new Error('Failed to delete course');
+        throw new Error("Failed to delete course");
       }
       setUsers(users.filter((course) => course._id !== id));
     } catch (error) {
-      console.error('Error deleting course:', error.message);
+      console.error("Error deleting course:", error.message);
     }
   };
+
 
   return (
     <div className="font-[Chivo]  h-full pb-6 w-auto">

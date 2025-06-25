@@ -13,10 +13,16 @@ const JobTable = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch jobs');
+     const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`,
+      {
+        credentials: 'include', // ✅ Add this if your route is protected
       }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch jobs');
+    }
       const data = await response.json();
       setJobsData(data);
     } catch (error) {
@@ -26,12 +32,18 @@ const JobTable = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/delete/${id}`, {
+      const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/delete/${id}`,
+      {
         method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete job');
+        credentials: 'include', // ✅ Same here if backend is protected
       }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to delete job');
+    }
+
       fetchJobs(); // Refresh jobs list after deletion
     } catch (error) {
       console.error('Error deleting job:', error);

@@ -96,7 +96,7 @@ function Seo() {
               className="w-full sm:max-w-sm rounded-md overflow-hidden bg-white mb-6 border-2 border-white shadow-lg"
             >
               <img
-                src={`${import.meta.env.VITE_API_BASE_URL}/route/${course.image}`}
+                src={`${import.meta.env.VITE_API_BASE_URL}/${course.image}`}
                 className="w-full h-64 object-cover"
                 alt={course.title}
               />

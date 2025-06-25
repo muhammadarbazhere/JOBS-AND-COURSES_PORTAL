@@ -12,10 +12,17 @@ const Internships = () => {
     const fetchInternships = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+            const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`,
+      {
+        credentials: 'include', // ✅ Include cookies if route is protected
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
             const data = await response.json();
             const filteredInternships = data.filter(item => item.jobOrInternship === 'internship');
             setInternships(filteredInternships);

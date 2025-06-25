@@ -12,10 +12,16 @@ const MixJobInternships = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch jobs");
+        const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`,
+        {
+          credentials: "include", // ✅ Add this if the route requires authentication
         }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch jobs");
+      }
         const data = await response.json();
         setJobs(data);
         setLoading(false);

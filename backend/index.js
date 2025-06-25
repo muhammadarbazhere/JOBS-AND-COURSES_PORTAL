@@ -19,7 +19,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // ✅ Security middleware
-// app.use(helmet()); net::ERR_BLOCKED_BY_RESPONSE.NotSameOrigin {blocks pictures}
+// app.use(helmet()); net::ERR_BLOCKED_BY_RESPONSE.NotSameOrigin {blocks pictures} // Disable CORP to allow images from other origins
 
 app.use(
   helmet.crossOriginResourcePolicy({ policy: "cross-origin" })
