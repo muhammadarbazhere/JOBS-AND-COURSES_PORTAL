@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { AppBar, Toolbar, IconButton } from "@material-ui/core";
-import { Notifications as NotificationsIcon } from "@material-ui/icons";
+import { AppBar, Toolbar, IconButton } from "@mui/material";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import SearchIcon from '@mui/icons-material/Search';
+import PolicyIcon from '@mui/icons-material/Policy';
+
 import { SiGooglemaps } from "react-icons/si";
 import { HiUsers } from "react-icons/hi2";
 import { GrUserAdmin } from "react-icons/gr";
 import { FaHome } from "react-icons/fa";
-import SearchIcon from "@material-ui/icons/Search";
+
 import { NavLink, useNavigate } from "react-router-dom";
 
-import PolicyIcon from "@mui/icons-material/Policy";
 import OrderSummary from "./Files/OrderSummary";
 import Report from "./Files/Report";
 import TaskProgress from "./Files/TaskProgress";

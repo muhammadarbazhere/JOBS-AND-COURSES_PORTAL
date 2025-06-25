@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, Tab, Tabs } from '@material-ui/core';
+import { Card, CardContent, Tabs, Tab } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
