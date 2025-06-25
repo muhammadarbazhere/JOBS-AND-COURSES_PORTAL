@@ -35,15 +35,20 @@ app.use(
 // }));
 
 
-app.use(cors({
+
+// ✅ CORS setup
+const corsOptions = {
   origin: [
-    process.env.FRONTEND_BASE_URL,   // For deployed frontend later
-    "http://localhost:5173"          // For local frontend testing
+    "https://arbaz-webcraft.vercel.app",   // ✅ Production frontend
+    "http://localhost:5173"                // ✅ Local frontend
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-}));
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));  // ✅ Handle preflight
 
 
 // ✅ Middleware
