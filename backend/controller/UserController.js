@@ -102,7 +102,7 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "3d" }
     );
-    res.cookie("token", token, { httpOnly: true, sameSite: "Strict" });
+    res.cookie("token", token, { httpOnly: true, sameSite: "Strict",  secure: true  });
 
     // Send welcome back email
     const mailOptions = {
@@ -232,7 +232,7 @@ const logout = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.clearCookie("token", { httpOnly: true, sameSite: "Strict" });
+    res.clearCookie("token", { httpOnly: true, sameSite: "Strict",  secure: true  });
 
     // Send email notification about logout
     const mailOptions = {
