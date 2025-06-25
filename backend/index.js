@@ -23,7 +23,9 @@ app.use(helmet());
 
 // ✅ CORS setup for cross-origin requests and cookies
 app.use(cors({
-  origin: process.env.FRONTEND_BASE_URL, // e.g., https://your-frontend.vercel.app
+  origin: process.env.FRONTEND_BASE_URL ||  "http://localhost:5173", 
+  
+  // e.g., https://your-frontend.vercel.app
   credentials: true,
 }));
 
