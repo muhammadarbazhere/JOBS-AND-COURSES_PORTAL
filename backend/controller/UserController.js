@@ -103,8 +103,7 @@ const login = async (req, res) => {
       { expiresIn: "3d" }
     );
     res.cookie("token", token, { httpOnly: true, sameSite: "none", 
-      
-    //  secure: true
+        secure: true
     
     });
 

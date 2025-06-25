@@ -25,30 +25,18 @@ app.use(
   helmet.crossOriginResourcePolicy({ policy: "cross-origin" })
 );
 
-
-// ✅ CORS setup for cross-origin requests and cookies
-// app.use(cors({
-//   origin: process.env.FRONTEND_BASE_URL ||  "http://localhost:5173", 
-  
-//   // e.g., https://your-frontend.vercel.app
-//   credentials: true,
-// }));
-
-
-
 // ✅ CORS setup
 const corsOptions = {
-  origin: [
-    "https://arbaz-webcraft.vercel.app",   // ✅ Production frontend
-    "http://localhost:5173"                // ✅ Local frontend
+   origin: [
+    process.env.FRONTEND_BASE_URL,    // ✅ Production frontend from .env
+    "http://localhost:5173"           // ✅ Local frontend
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));  // ✅ Handle preflight
+app.use(cors(corsOptions)); 
 
 
 // ✅ Middleware
