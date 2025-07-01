@@ -32,6 +32,32 @@ const addToCart = async (req, res) => {
   }
 };
 
+
+const getCartData = async (req, res) => {
+  try {
+    const users = await User.find().populate("cart.courses.course");
+
+    let totalCoursesSold = 0;
+    let totalEarnings = 0;
+
+    users.forEach(user => {
+      totalCoursesSold += user.cart.courses.length;
+      user.cart.courses.forEach(item => {
+        totalEarnings += item.course?.charges || 0;
+      });
+    });
+
+    res.json({
+      totalCoursesSold,
+      totalEarnings,
+    });
+  } catch (error) {
+    console.error('Error fetching cart data:', error);
+    res.status(500).json({ message: 'Error fetching cart data' });
+  }
+};
+
+
 // Remove course from cart
 const removeFromCart = async (req, res) => {
   const userId = req.userId;
@@ -106,6 +132,7 @@ const clearCart = async (req, res) => {
 
 module.exports = {
   addToCart,
+  getCartData,
   removeFromCart,
   getUserCart,
   clearCart,

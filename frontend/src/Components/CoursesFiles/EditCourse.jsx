@@ -4,10 +4,12 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import logo from '../../assets/logo.jpg';
 import { MdOutlineCancelPresentation } from "react-icons/md";
+import { useSelector } from "react-redux";
 
 const EditCourse = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const token = useSelector((state) => state.auth.token); // ✅ Token from Redux
 
   const [updateData, setUpdateData] = useState({
     title: '',
@@ -27,7 +29,9 @@ const EditCourse = () => {
         const response = await fetch(
           `${import.meta.env.VITE_API_BASE_URL}/route/courses/getCourseById/${id}`,
           {
-            credentials: 'include' // ✅ Required to pass token
+            headers: {
+              Authorization: `Bearer ${token}`, // ✅ Use token instead of credentials
+            },
           }
         );
         if (!response.ok) {
@@ -41,7 +45,7 @@ const EditCourse = () => {
           category: data.category,
           charges: data.charges,
           duration: data.duration,
-          image: data.image // This is image URL from server
+          image: data.image,
         });
         setIsLoading(false);
       } catch (error) {
@@ -51,41 +55,45 @@ const EditCourse = () => {
     };
 
     fetchCourse();
-  }, [id]);
+  }, [id, token]);
 
   const newData = (e) => {
-    if (e.target.name === "image") {
+    const { name, value, files } = e.target;
+    if (name === "image") {
       setUpdateData({
         ...updateData,
-        image: e.target.files[0] // File object
+        image: files[0],
       });
     } else {
-      setUpdateData({ ...updateData, [e.target.name]: e.target.value });
+      setUpdateData({ ...updateData, [name]: value });
     }
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("title", updateData.title);
-      formDataToSend.append("author", updateData.author);
-      formDataToSend.append("description", updateData.description);
-      formDataToSend.append("category", updateData.category);
-      formDataToSend.append("charges", updateData.charges);
-      formDataToSend.append("duration", updateData.duration);
-      if (updateData.image && typeof updateData.image !== 'string') {
-        formDataToSend.append("image", updateData.image);
+      const formData = new FormData();
+      formData.append("title", updateData.title);
+      formData.append("author", updateData.author);
+      formData.append("description", updateData.description);
+      formData.append("category", updateData.category);
+      formData.append("charges", updateData.charges);
+      formData.append("duration", updateData.duration);
+      if (updateData.image && typeof updateData.image !== "string") {
+        formData.append("image", updateData.image);
       }
 
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/route/courses/updateCourse/${id}`,
         {
           method: 'PUT',
-          body: formDataToSend,
-          credentials: 'include' // ✅ Required
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Add token here
+          },
+          body: formData,
         }
       );
+
       if (!response.ok) {
         throw new Error('Failed to update course');
       }
@@ -102,77 +110,80 @@ const EditCourse = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen text-xl">Loading...</div>;
   }
 
   return (
     <div className="bg-blue-100 py-20">
       <div className="mx-auto w-full md:w-2/3 lg:w-1/2">
         <div className="bg-white shadow-md rounded px-8 pt-6 pb-8">
-
-<div className="flex items-end justify-end">
-        <button
-            onClick={handleCancelEdit}
-            className=" text-black  font-bold py-2 px-4 rounded mb-4 focus:outline-none focus:shadow-outline"
-          >
-            <MdOutlineCancelPresentation fontSize={30}/>
-          </button>
-  
-  </div>
-
-          <h1 className="text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 text-3xl font-bold text-white flex items-center justify-center space-x-3 py-6 text-center mb-2">
-            <h2>
-              Update
-            </h2>
-            <span className="text-2xl">
-              {updateData.title}
-            </span>
-          </h1>
-          <hr className="w-full h-2 text-blue-[#00008B]" />
-          <div className="flex justify-center rounded-md mb-2">
-            <img src={logo} alt="Logo" className="mb-5 h-28 w-28" />
+          <div className="flex items-end justify-end">
+            <button
+              onClick={handleCancelEdit}
+              className="text-black font-bold py-2 px-4 rounded mb-4 focus:outline-none"
+            >
+              <MdOutlineCancelPresentation fontSize={30} />
+            </button>
           </div>
+
+          <h1 className="text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 text-3xl font-bold flex justify-center space-x-3 py-6 mb-2">
+            <span>Update</span>
+            <span className="text-2xl">{updateData.title}</span>
+          </h1>
+
+          <div className="flex justify-center mb-2">
+            <img src={logo} alt="Logo" className="h-28 w-28" />
+          </div>
+
           <form onSubmit={handleUpdate}>
+            {/* Title */}
             <div className="mb-4">
-              <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">Course Title</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Course Title</label>
               <input
                 type="text"
-                id="title"
                 name="title"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 value={updateData.title}
                 onChange={newData}
+                className="shadow border rounded w-full py-2 px-3"
+                required
               />
             </div>
+
+            {/* Author */}
             <div className="mb-4">
-              <label htmlFor="author" className="block text-gray-700 text-sm font-bold mb-2">Author</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Author</label>
               <input
                 type="text"
-                id="author"
                 name="author"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 value={updateData.author}
                 onChange={newData}
+                className="shadow border rounded w-full py-2 px-3"
+                required
               />
             </div>
+
+            {/* Description */}
             <div className="mb-4">
-              <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2">Description</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Description</label>
               <textarea
-                id="description"
                 name="description"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 value={updateData.description}
                 onChange={newData}
+                className="shadow border rounded w-full py-2 px-3"
+                rows={3}
+                required
               />
             </div>
+
+            {/* Category */}
             <div className="mb-4">
-              <label htmlFor="category" className="block text-gray-700 text-sm font-bold mb-2">Category</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Category</label>
               <select
-                id="category"
                 name="category"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 value={updateData.category}
                 onChange={newData}
+                className="shadow border rounded w-full py-2 px-3"
+                required
               >
                 <option value="">Select a category</option>
                 <option value="Website Development">Website Development</option>
@@ -184,53 +195,63 @@ const EditCourse = () => {
                 <option value="Graphic Designing">Graphic Designing</option>
               </select>
             </div>
+
+            {/* Charges */}
             <div className="mb-4">
-              <label htmlFor="charges" className="block text-gray-700 text-sm font-bold mb-2">Charges ($)</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Charges ($)</label>
               <input
                 type="number"
-                id="charges"
                 name="charges"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 value={updateData.charges}
                 onChange={newData}
+                className="shadow border rounded w-full py-2 px-3"
+                required
               />
             </div>
+
+            {/* Duration */}
             <div className="mb-4">
-              <label htmlFor="duration" className="block text-gray-700 text-sm font-bold mb-2">Duration</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Duration</label>
               <input
                 type="text"
-                id="duration"
                 name="duration"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 value={updateData.duration}
                 onChange={newData}
+                className="shadow border rounded w-full py-2 px-3"
+                required
               />
             </div>
-            {/* New file input for image upload */}
+
+            {/* Image Upload */}
             <div className="mb-4">
-              <label htmlFor="image" className="block text-gray-700 text-sm font-bold mb-2">Course Image</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Course Image</label>
               <input
                 type="file"
-                id="image"
                 name="image"
                 accept="image/*"
                 onChange={newData}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow border rounded w-full py-2 px-3"
               />
+              {/* ✅ Preview existing image or selected new image */}
               {updateData.image && typeof updateData.image === 'string' && (
-                <div className="mt-3">
-                  <img src={`${import.meta.env.VITE_API_BASE_URL}/>${updateData.image}`} alt="Course" className="object-contain h-40 w-full" />
-                </div>
+                <img
+                  src={`${import.meta.env.VITE_API_BASE_URL}/${updateData.image}`}
+                  alt="Course"
+                  className="mt-3 object-contain h-40 w-full"
+                />
               )}
               {updateData.image && typeof updateData.image !== 'string' && (
-                <div className="mt-3">
-                  <img src={URL.createObjectURL(updateData.image)} alt="Preview" className="object-contain h-40 w-full" />
-                </div>
+                <img
+                  src={URL.createObjectURL(updateData.image)}
+                  alt="Preview"
+                  className="mt-3 object-contain h-40 w-full"
+                />
               )}
             </div>
+
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold w-full py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold w-full py-2 px-4 rounded"
             >
               Update Course
             </button>

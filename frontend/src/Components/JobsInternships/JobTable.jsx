@@ -11,18 +11,20 @@ const JobTable = () => {
     fetchJobs();
   }, []);
 
-  const fetchJobs = async () => {
+   const fetchJobs = async () => {
     try {
-     const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`,
-      {
-        credentials: 'include', // ✅ Add this if your route is protected
-      }
-    );
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch jobs');
-    }
+      if (!response.ok) {
+        throw new Error('Failed to fetch jobs');
+      }
       const data = await response.json();
       setJobsData(data);
     } catch (error) {
@@ -33,18 +35,20 @@ const JobTable = () => {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/delete/${id}`,
-      {
-        method: 'DELETE',
-        credentials: 'include', // ✅ Same here if backend is protected
+        `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/delete/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to delete job');
       }
-    );
 
-    if (!response.ok) {
-      throw new Error('Failed to delete job');
-    }
-
-      fetchJobs(); // Refresh jobs list after deletion
+      fetchJobs();
     } catch (error) {
       console.error('Error deleting job:', error);
     }

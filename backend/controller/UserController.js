@@ -6,7 +6,7 @@ const multer = require("multer");
 const path = require("path");
 require("dotenv").config();
 
-// Configure multer for file uploads
+// ✅ Multer config
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./uploads/");
@@ -15,22 +15,20 @@ const storage = multer.diskStorage({
     cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
-
 const upload = multer({ storage: storage });
 
-// Configure Nodemailer
+// ✅ Nodemailer config
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL_ADMIN,
-    pass: process.env.EMAIL_PASS, // Use the app-specific password here
+    pass: process.env.EMAIL_PASS,
   },
 });
 
-// Signup function
+// ✅ Signup
 const signup = async (req, res) => {
   const { firstName, lastName, email, password, dateOfBirth } = req.body;
-
   try {
     if (!req.file) {
       return res.status(401).json({ message: "Please upload an image" });
@@ -45,7 +43,6 @@ const signup = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user
     const user = await User.create({
       firstName,
       lastName,
@@ -55,7 +52,6 @@ const signup = async (req, res) => {
       image,
     });
 
-    // Send email
     const mailOptions = {
       from: process.env.EMAIL_ADMIN,
       to: email,
@@ -63,15 +59,10 @@ const signup = async (req, res) => {
       text: `Dear ${firstName},\n\nThank you for creating an account with Arbaz WebCraft. We're excited to have you on board!\n\nRegards,\nThe Arbaz WebCraft Team`,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
+    transporter.sendMail(mailOptions, (error) => {
       if (error) {
         console.log("Error sending email:", error);
-        return res.status(500).json({
-          message:
-            "Error sending email. Signup succeeded but email sending failed.",
-        });
       }
-      console.log("Email sent:", info.response);
     });
 
     res.status(201).json({ message: "Successfully signed up", user });
@@ -81,7 +72,7 @@ const signup = async (req, res) => {
   }
 };
 
-// Login function
+// ✅ Login
 const login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -102,12 +93,7 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "3d" }
     );
-    res.cookie("token", token, { httpOnly: true, sameSite: "none", 
-        secure: true
-    
-    });
 
-    // Send welcome back email
     const mailOptions = {
       from: process.env.EMAIL_ADMIN,
       to: email,
@@ -115,11 +101,9 @@ const login = async (req, res) => {
       text: `Dear ${user.firstName},\n\nYou have successfully logged in to your Arbaz WebCraft account. Welcome back!\n\nIf this was not you, please contact our support team immediately.\n\nRegards,\nThe Arbaz WebCraft Team`,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
+    transporter.sendMail(mailOptions, (error) => {
       if (error) {
         console.log("Error sending email:", error);
-      } else {
-        console.log("Email sent:", info.response);
       }
     });
 
@@ -135,55 +119,14 @@ const login = async (req, res) => {
   }
 };
 
-// update user role
-const updateUserRole = async (req, res) => {
-  const { userId, newRole } = req.body;
-
-  try {
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { role: newRole },
-      { new: true } // return the updated document
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Send email notification about role change
-    const roleMessage =
-      newRole === "admin" ? "You are now an admin." : "You are now a user.";
-    const mailOptions = {
-      from: process.env.EMAIL_ADMIN,
-      to: user.email,
-      subject: "Role Update Notification",
-      text: `Dear ${user.firstName},\n\nYour role has been updated. ${roleMessage}\n\nRegards,\nThe Arbaz WebCraft Team`,
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log("Error sending email:", error);
-      } else {
-        console.log("Email sent:", info.response);
-      }
-    });
-
-    res.status(200).json({ message: "User role updated", user });
-  } catch (error) {
-    console.error("Error updating user role:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-// Verify token
-
+// ✅ Verify Token (No cookies, token from headers)
 const verifyToken = (req, res, next) => {
-  const token = req.cookies.token;
-  // console.log('Token:', token); // Log the token for debugging
-
-  if (!token) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Unauthorized: No token provided" });
   }
+
+  const token = authHeader.split(" ")[1];
 
   try {
     const user = jwt.verify(token, process.env.JWT_SECRET);
@@ -195,24 +138,63 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-// Get user
+// ✅ Update User Role
+const updateUserRole = async (req, res) => {
+  const { userId, newRole } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { role: newRole },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const roleMessage =
+      newRole === "admin" ? "You are now an admin." : "You are now a user.";
+
+    const mailOptions = {
+      from: process.env.EMAIL_ADMIN,
+      to: user.email,
+      subject: "Role Update Notification",
+      text: `Dear ${user.firstName},\n\nYour role has been updated. ${roleMessage}\n\nRegards,\nThe Arbaz WebCraft Team`,
+    };
+
+    transporter.sendMail(mailOptions, (error) => {
+      if (error) {
+        console.log("Error sending email:", error);
+      }
+    });
+
+    res.status(200).json({ message: "User role updated", user });
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ✅ Get Single User Info
 const getUserInfo = async (req, res) => {
   const userId = req.userId;
   try {
     const user = await User.findById(userId, "-password");
-    if (!user || user.length === 0) {
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json({ user }); // Wrap user in an array
+    res.status(200).json({ user });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
+// ✅ Get All Users
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, "-password"); // Exclude passwords
+    const users = await User.find({}, "-password");
     if (!users || users.length === 0) {
       return res.status(404).json({ message: "No users found" });
     }
@@ -223,11 +205,9 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// Logout
-// Logout
+// ✅ Logout (Only handled frontend)
 const logout = async (req, res) => {
   try {
-    // Assuming req.userId is set by the verifyToken middleware
     const userId = req.userId;
     const user = await User.findById(userId);
 
@@ -235,9 +215,6 @@ const logout = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.clearCookie("token", { httpOnly: true, sameSite: "none",  secure: true  });
-
-    // Send email notification about logout
     const mailOptions = {
       from: process.env.EMAIL_ADMIN,
       to: user.email,
@@ -245,11 +222,9 @@ const logout = async (req, res) => {
       text: `Dear ${user.firstName},\n\nYou have successfully logged out from your Arbaz WebCraft account.\n\nRegards,\nThe Arbaz WebCraft Team`,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
+    transporter.sendMail(mailOptions, (error) => {
       if (error) {
         console.log("Error sending email:", error);
-      } else {
-        console.log("Email sent:", info.response);
       }
     });
 

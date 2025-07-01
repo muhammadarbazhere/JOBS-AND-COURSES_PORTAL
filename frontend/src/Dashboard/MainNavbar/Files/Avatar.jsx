@@ -8,22 +8,25 @@ import { FaShoppingCart } from "react-icons/fa";
 import { RxDashboard } from "react-icons/rx";
 
 function Avatar() {
-  const navigate = useNavigate();
+   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedin);
+  const token = useSelector((state) => state.auth.token); // ✅ Get token from Redux
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [cartItems, setCartItems] = useState([]);
-  
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedin);
-  const dispatch = useDispatch();
-  
+
   const dropdownRef = useRef(null);
 
   const openDropdown = () => {
-    setIsDropdownOpen(true);
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
+  // ✅ Close dropdown if clicked outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -32,56 +35,82 @@ function Avatar() {
     }
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // ✅ Fetch user
   const fetchUserData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/user`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/user`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if (response.ok) {
-        const data = await response.json();
+      if (res.ok) {
+        const data = await res.json();
         setUser(data.user);
         setIsAdmin(data.user.role === "admin");
-      } else {
-        throw new Error("User not found");
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.error("User fetch error:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  // ✅ Fetch Cart
+ const fetchCartItems = async () => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/getUserCart`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setCartItems(data.cart || []); // ✅ Protect against undefined
+    }
+  } catch (error) {
+    console.error("Cart fetch error:", error);
+    setCartItems([]); // ✅ Ensure cartItems stays an array
+  }
+};
+
+
   useEffect(() => {
     if (isLoggedIn) {
       fetchUserData();
+      fetchCartItems();
     }
-  }, []);
+  }, [isLoggedIn]);
 
+  // ✅ Logout
   const handleLogout = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-      if (res.status === 200) {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/logout`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.ok) {
         dispatch(authActions.logout());
-        console.log("Logout successful");
         navigate("/signin");
       } else {
-        throw new Error("Unable to logout! Try again");
+        throw new Error("Logout failed");
       }
-    } catch (err) {
-      console.error(err.message);
+    } catch (error) {
+      console.error("Logout error:", error);
     }
   };
 
@@ -164,7 +193,7 @@ function Avatar() {
               <div className="flex justify-between gap-20 lg:gap-24">
                 <p>My Cart</p>
                 <p className="bg-pink-600 text-white rounded-full">
-                  {cartItems.length > 0 && (
+                  {cartItems?.length > 0 && (
                     <span className="px-2 py-1 text-xs">{cartItems.length}</span>
                   )}
                 </p>

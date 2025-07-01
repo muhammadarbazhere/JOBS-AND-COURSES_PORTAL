@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaBriefcase, FaCalendarAlt, FaInfoCircle, FaTimesCircle } from "react-icons/fa";
 import { IoMdAlert } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const MixJobInternships = () => {
   const [jobs, setJobs] = useState([]);
@@ -9,19 +10,24 @@ const MixJobInternships = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const token = useSelector((state) => state.auth.token); // Get token from Redux
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`,
-        {
-          credentials: "include", // ✅ Add this if the route requires authentication
-        }
-      );
+          `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch jobs");
-      }
+        if (!response.ok) {
+          throw new Error("Failed to fetch jobs");
+        }
+
         const data = await response.json();
         setJobs(data);
         setLoading(false);
@@ -32,7 +38,7 @@ const MixJobInternships = () => {
     };
 
     fetchJobs();
-  }, []);
+  }, [token]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -65,12 +71,12 @@ const MixJobInternships = () => {
         </p>
       )}
       {!loading && !error && jobs.length === 0 && (
-        <p className="text-center mt-3">No jobs available.</p>
+        <p className="text-center mt-3">No jobs or internships available.</p>
       )}
       {!loading && !error && jobs.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 2xl:gap-14  px-4">
-          {jobs.map((job, id) => (
-            <div key={id} className="bg-white shadow-md rounded-lg overflow-hidden transform transition-all hover:scale-105">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 2xl:gap-14 px-4">
+          {jobs.map((job) => (
+            <div key={job._id} className="bg-white shadow-md rounded-lg overflow-hidden transform transition-all hover:scale-105">
               <div className="p-4">
                 <div className="flex justify-between items-center mb-4">
                   <span className={`text-sm ${job.jobOrInternship === 'job' ? 'bg-blue-100 text-blue-600' : 'bg-yellow-100 text-yellow-600'} px-2 py-1 rounded-full`}>
@@ -96,7 +102,7 @@ const MixJobInternships = () => {
                   {job.description}
                 </p>
                 <div className="flex justify-end">
-                <button
+                  <button
                     className={`bg-gradient-to-r from-green-400 to-blue-500 text-white cursor-pointer font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ${job.status === 'closed' ? 'opacity-50 cursor-not-allowed' : ''}`}
                     onClick={() => handleApply(job._id)}
                     disabled={job.status === 'closed'}

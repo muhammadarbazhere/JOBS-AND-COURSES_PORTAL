@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 import logo from '../../assets/logo.jpg';
 
 function AddJobInternshipForm() {
   const navigate = useNavigate();
+  const token = useSelector((state) => state.auth.token); // ✅ Get token from Redux
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    jobOrInternship: '', // This will store either 'job' or 'internship'
+    jobOrInternship: '',
   });
 
   const handleChange = (e) => {
@@ -28,14 +31,17 @@ function AddJobInternshipForm() {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-         credentials: 'include', // ✅ Important to send JWT token via cookies
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/create`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // ✅ Token added here
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -60,10 +66,9 @@ function AddJobInternshipForm() {
         </div>
         <form onSubmit={handleSubmit} className="mx-auto">
           <div className="mb-6">
-            <label htmlFor="title" className="block text-gray-500 text-sm font-bold mb-2">Job Title</label>
+            <label className="block text-gray-500 text-sm font-bold mb-2">Job Title</label>
             <input
               required
-              id="title"
               name='title'
               type="text"
               placeholder='Job Title'
@@ -73,10 +78,9 @@ function AddJobInternshipForm() {
             />
           </div>
           <div className="mb-6">
-            <label htmlFor="description" className="block text-gray-500 text-sm font-bold mb-2">Job Description</label>
+            <label className="block text-gray-500 text-sm font-bold mb-2">Job Description</label>
             <input
               required
-              id="description"
               name='description'
               type="text"
               placeholder='Description'
@@ -114,9 +118,13 @@ function AddJobInternshipForm() {
           <button
             type="submit"
             disabled={!formData.title || !formData.description || !formData.jobOrInternship}
-            className={`bg-blue-500 ${(!formData.title || !formData.description || !formData.jobOrInternship) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'} w-full rounded-xl text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline`}
+            className={`bg-blue-500 ${
+              (!formData.title || !formData.description || !formData.jobOrInternship)
+                ? 'opacity-50 cursor-not-allowed'
+                : 'hover:bg-blue-600'
+            } w-full rounded-xl text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline`}
           >
-            Add Job
+            Add {formData.jobOrInternship === 'internship' ? 'Internship' : 'Job'}
           </button>
         </form>
       </div>

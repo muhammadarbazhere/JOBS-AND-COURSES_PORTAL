@@ -7,12 +7,14 @@ import Avatar from "../Dashboard/MainNavbar/Files/Avatar";
 import { useSelector } from "react-redux";
 
 function Navbar() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  ;const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeNavLink, setActiveNavLink] = useState("home"); 
   const location = useLocation();
   const navigate = useNavigate()
   const [cartItems, setCartItems] = useState([]);
+     const token = useSelector((state) => state.auth.token);
+  
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
@@ -31,8 +33,9 @@ function Navbar() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+             Authorization: `Bearer ${token}`,
           },
-          credentials: "include",
+          
         });
 
         if (!response.ok) {
@@ -71,7 +74,7 @@ function Navbar() {
     setTimeout(() => {
       window.location.href = '/'; 
     }, ); 
-  };
+  }
 
   return (
     <nav className="bg-blue-100 sticky top-0 z-50 text-[#374151] border-gray-200 dark:bg-gray-900">

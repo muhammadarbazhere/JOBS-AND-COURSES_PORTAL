@@ -3,14 +3,16 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { FaArrowTrendUp } from 'react-icons/fa6';
+import { useSelector } from 'react-redux';
 
 function Courses() {
+  const token = useSelector((state) => state.auth.token);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(4);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
     fetchCourses();
@@ -19,7 +21,9 @@ function Courses() {
   const fetchCourses = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/courses/getCourses`);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/courses/getCourses`
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch courses');
       }
@@ -32,40 +36,45 @@ function Courses() {
     }
   };
 
-  // Get current courses to display
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentCourses = courses.slice(indexOfFirstPost, indexOfLastPost);
-
-  // Pagination function
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
+  // ✅ Add to Cart Handler (with token)
   const handleAddToCart = async (course) => {
+    if (!token) {
+      toast.error('Please login to add items to cart');
+      return;
+    }
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/cart/addCart`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ courseId: course._id }),
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/cart/addCart`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // ✅ Add token here
+          },
+          body: JSON.stringify({ courseId: course._id }),
+        }
+      );
 
       const data = await response.json();
+
       if (!response.ok) {
         throw new Error(data.message || 'Failed to add course to cart');
       }
 
-      // Update local cart items
-      setCartItems(prevItems => [...prevItems, course]);
       toast.success(`${course.title} added to cart!`);
-      
     } catch (error) {
-      toast.error(`Failed to add ${course.title} to cart: ${error.message}`);
+      toast.error(`Failed to add ${course.title}: ${error.message}`);
       console.error('Error adding course to cart:', error);
     }
   };
-  
+
+  // ✅ Pagination
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentCourses = courses.slice(indexOfFirstPost, indexOfLastPost);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="font-[Chivo] bg-blue-100 px-4 lg:px-6 xl:px-20">
@@ -97,7 +106,7 @@ function Courses() {
               className="w-full sm:max-w-sm rounded-md overflow-hidden bg-white mb-6 border-2 border-white shadow-lg transform transition-all hover:scale-105"
             >
               <img
-               src={`${import.meta.env.VITE_API_BASE_URL}/${course.image}`}
+                src={`${import.meta.env.VITE_API_BASE_URL}/${course.image}`}
                 className="w-full h-64 object-cover"
                 alt={course.title}
               />
@@ -106,21 +115,19 @@ function Courses() {
                   {course.title}
                 </div>
                 <p className="text-gray-700 flex gap-2 font-bold text-sm mb-1">
-                  <h1>{course.category}</h1>
-                  <span>
-                    <FaArrowTrendUp size={20} />
-                  </span>
+                  <span>{course.category}</span>
+                  <FaArrowTrendUp size={20} />
                 </p>
                 <p className="text-gray-700 pb-1 text-base">
                   {course.description}
                 </p>
 
                 <div className="flex items-center justify-start gap-2">
-                  <p className="font-bold text-gray-800 text-end text-xl">
+                  <p className="font-bold text-gray-800 text-xl">
                     ${course.charges}
                   </p>
-                  <p className="font-bold line-through text-gray-600 text-end text-base">
-                    ${(course.charges * 5.70).toFixed(2)}
+                  <p className="font-bold line-through text-gray-600 text-base">
+                    ${(course.charges * 5.7).toFixed(2)}
                   </p>
                 </div>
 
@@ -136,7 +143,7 @@ function Courses() {
         </div>
       )}
 
-      {/* Pagination */}
+      {/* ✅ Pagination */}
       <div className="flex justify-center pt-6">
         <button
           className="mx-1 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none"
@@ -154,8 +161,8 @@ function Courses() {
               key={i}
               className={`mx-1 px-3 py-1 ${
                 currentPage === i + 1
-                  ? "bg-blue-600 text-white"
-                  : "bg-[#5F9BCE] text-white hover:bg-[#5F9BCE]"
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-[#5F9BCE] text-white hover:bg-[#5F9BCE]'
               } rounded-lg hover:bg-[#5F9BCE] focus:outline-none`}
               onClick={() => paginate(i + 1)}
             >

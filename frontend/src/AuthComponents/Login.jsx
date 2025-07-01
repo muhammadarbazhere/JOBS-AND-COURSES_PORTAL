@@ -24,54 +24,52 @@ function Login() {
     }));
   };
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError('');
+ async function handleSubmit(e) {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setError('');
 
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(inputs),
-        credentials: 'include',
-      });
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(inputs),
+    });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        console.log('Login successful');
-        dispatch(authActions.login());
-        if (data.role === "admin") {
-          navigate("/dashboard");
-          console.log("Admin logged in");
-        } else {
-          navigate("/");
-          console.log("User logged in");
-        }
-        alert('Login successful. Please check your email for confirmation.');
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
 
-        setInputs({
-          email: '',
-          password: '',
-        });
+      // Save token in Redux + localStorage
+      dispatch(authActions.login(data.token));
+
+      if (data.role === "admin") {
+        navigate("/dashboard");
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
+        navigate("/");
       }
-    } catch (err) {
-      console.error(err);
-      if (err.message === "Email not found, please sign up" || err.message === "Incorrect password") {
-        setError(err.message);
-      } else {
-        setError("Server error");
-      }
-    }finally {
-      setIsSubmitting(false);
+
+      alert('Login successful. Please check your email for confirmation.');
+
+      setInputs({ email: '', password: '' });
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Login failed");
     }
+  } catch (err) {
+    console.error(err);
+    if (err.message === "Email not found, please sign up" || err.message === "Incorrect password") {
+      setError(err.message);
+    } else {
+      setError("Server error");
+    }
+  } finally {
+    setIsSubmitting(false);
   }
+}
+
 
   return (
     <div className="flex justify-center h-dvh items-center bg-blue-100 pt-10 pb-20">
@@ -113,7 +111,7 @@ function Login() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="text-blue border-2 border-[text-[#5F9BCE]] mt-4 px-4 py-2 rounded-md hover:text-white hover:bg-[#5F9BCE] focus:outline-none focus:bg-[#5F9BCE] w-full duration-700 ease-in-out"
+            className="text-blue border-2 border-[#5F9BCE] mt-4 px-4 py-2 rounded-md hover:text-white hover:bg-[#5F9BCE] focus:outline-none focus:bg-[#5F9BCE] w-full duration-700 ease-in-out"
           >
              {isSubmitting ? "Signing In..." : "Sign In"}
            

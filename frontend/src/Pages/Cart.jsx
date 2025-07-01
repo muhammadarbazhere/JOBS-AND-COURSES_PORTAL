@@ -3,6 +3,7 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Cart() {
   const [cart, setCart] = useState([]);
@@ -10,6 +11,7 @@ function Cart() {
   const [error, setError] = useState("");
   const [discount, setDiscount] = useState(0);
   const navigate = useNavigate();
+   const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
     fetchCartItems(); // Fetch cart items when component mounts
@@ -23,8 +25,7 @@ function Cart() {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          // Include any necessary headers, such as Authorization if needed
-          // "Authorization": `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token}`,
         },
       });
 
@@ -61,6 +62,7 @@ function Cart() {
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, 
           },
         }
       );

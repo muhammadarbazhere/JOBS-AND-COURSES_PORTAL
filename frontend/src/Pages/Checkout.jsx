@@ -13,22 +13,23 @@ import { FaCreditCard } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
 import countries from "./countries"; 
 import logo from '../assets/logo.jpg';
+import { useSelector } from "react-redux";
 
 function Checkout() {
   const [cart, setCart] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("card");
-  const [billingAddress, setBillingAddress] = useState({
-    country: "Pakistan",
-  });
+  const [billingAddress, setBillingAddress] = useState({ country: "Pakistan" });
   const [paymentDetails, setPaymentDetails] = useState({
     nameOnCard: "",
     cardNumber: "",
     expiryDate: "",
     cvc: "",
   });
+
   const location = useLocation();
   const { discount } = location.state || { discount: 0 };
   const navigate = useNavigate();
+  const token = useSelector((state) => state.auth.token); // Get token from redux
 
   useEffect(() => {
     fetchCartItems();
@@ -36,13 +37,16 @@ function Checkout() {
 
   const fetchCartItems = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/cart/getUserCart`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/cart/getUserCart`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch cart items");
@@ -75,17 +79,21 @@ function Checkout() {
 
   const handleProceedForCredit = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/payment/credit-card`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          cart,
-          discount,
-          paymentDetails,
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/payment/credit-card`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            cart,
+            discount,
+            paymentDetails,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.text();
@@ -94,7 +102,7 @@ function Checkout() {
 
       const { transactionId } = await response.json();
       alert(`Payment successful! Transaction ID: ${transactionId}`);
-      navigate('/order-success'); // Redirect to confirmation page or any other page
+      navigate('/order-success');
     } catch (error) {
       console.error("Error processing credit card payment:", error.message);
     }
@@ -102,32 +110,37 @@ function Checkout() {
 
   const handleProceedForPaypal = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/payment/paypal`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          cart,
-          discount,
-        }),
-      });
-  
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/payment/paypal`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            cart,
+            discount,
+          }),
+        }
+      );
+
       if (!response.ok) {
         const errorData = await response.text();
         throw new Error(`Failed to redirect to PayPal: ${errorData}`);
       }
-  
+
       const { redirectUrl } = await response.json();
       window.location.href = redirectUrl;
     } catch (error) {
       console.error("Error redirecting to PayPal:", error.message);
     }
   };
-  
 
   const ProceedHandler = () => {
-    return paymentMethod === "paypal" ? handleProceedForPaypal : handleProceedForCredit;
+    return paymentMethod === "paypal"
+      ? handleProceedForPaypal
+      : handleProceedForCredit;
   };
 
   const total = cart.reduce((acc, course) => acc + course.charges, 0);
@@ -138,6 +151,7 @@ function Checkout() {
       window.location.href = '/cart';
     });
   };
+
 
   return (
     <div>

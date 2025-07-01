@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { FaClipboardUser } from "react-icons/fa6";
+import { useSelector } from "react-redux";
 
 const UserData = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const token = useSelector((state) => state.auth.token); // ✅ Get token from Redux
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/allUsers`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/route/allUsers`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, // ✅ Correct way
+            },
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
@@ -33,42 +39,48 @@ const UserData = () => {
     };
 
     fetchData();
-  }, []);
+  }, [token]);
 
   const handleRoleChange = async (userId, newRole) => {
-    const user = users.find(user => user._id === userId);
+    const user = users.find((u) => u._id === userId);
     const confirmationMessage = `Are you sure you want to change ${user.firstName} ${user.lastName}'s role to ${newRole}?`;
     const isConfirmed = window.confirm(confirmationMessage);
 
-    if (isConfirmed) {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/updateUserRole`, {
+    if (!isConfirmed) return;
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/updateUserRole`,
+        {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // ✅ Auth header added
           },
-          credentials: "include",
           body: JSON.stringify({ userId, newRole }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUsers(users.map(user => (user._id === userId ? data.user : user)));
-        } else {
-          throw new Error("Failed to update user role");
         }
-      } catch (error) {
-        console.error("Error updating user role:", error);
-        setError(error.message);
+      );
+
+      if (response.ok) {
+        const updatedUser = await response.json();
+        setUsers((prev) =>
+          prev.map((u) => (u._id === userId ? updatedUser.user : u))
+        );
+      } else {
+        throw new Error("Failed to update user role");
       }
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      setError(error.message);
     }
   };
+
   return (
     <div className="ml-24 sm:ml-56 h-dvh">
       <div className="bg-blue-100 mt-8 p-4 font-[Chivo]">
         <div className="font-bold text-lg flex gap-1 items-center">
-          <FaClipboardUser className="" size={20} />
-          <h1>All Data</h1>
+          <FaClipboardUser size={20} />
+          <h1>All Users</h1>
         </div>
 
         {loading && <p>Loading...</p>}
@@ -91,7 +103,9 @@ const UserData = () => {
                 <td className="p-2">
                   <button
                     className={`w-24 p-2 rounded cursor-default ${
-                      user.role === "admin" ? "border-green-500 border" : "border-blue-500 border"
+                      user.role === "admin"
+                        ? "border-green-500 border"
+                        : "border-blue-500 border"
                     } text-black`}
                   >
                     {user.role}
@@ -105,7 +119,7 @@ const UserData = () => {
                         user.role === "admin" ? "user" : "admin"
                       )
                     }
-                    className="bg-yellow-500 hover:bg-yellow-700 duration-1000 text-white p-2 w-28 rounded"
+                    className="bg-yellow-500 hover:bg-yellow-700 duration-700 text-white p-2 w-28 rounded"
                   >
                     Make {user.role === "admin" ? "user" : "admin"}
                   </button>

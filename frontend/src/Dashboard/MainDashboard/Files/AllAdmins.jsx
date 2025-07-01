@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FaClipboardUser } from "react-icons/fa6";
+import { useSelector } from "react-redux";
 
 const AllAdmins = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const token = useSelector((state) => state.auth.token); // ✅ Get token from Redux
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,13 +17,12 @@ const AllAdmins = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // ✅ Send token here
           },
-          credentials: "include",
         });
 
         if (response.ok) {
           const data = await response.json();
-          // Filter users where role is "user"
           const filteredUsers = data.users.filter(user => user.role === "admin");
           setUsers(filteredUsers);
         } else {
@@ -35,12 +37,12 @@ const AllAdmins = () => {
     };
 
     fetchData();
-  }, []);
+  }, [token]);
 
   const handleRoleChange = async (userId, newRole) => {
-    const confirmationMessage = newRole === "admin" 
+    const confirmationMessage = newRole === "admin"
       ? "Are you sure you want to make this user an admin?"
-      : "Are you sure you want to make this admin a user?";
+      : "Are you sure you want to remove admin rights?";
 
     const isConfirmed = window.confirm(confirmationMessage);
 
@@ -50,15 +52,13 @@ const AllAdmins = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // ✅ Token required
           },
-          credentials: "include",
           body: JSON.stringify({ userId, newRole }),
         });
 
         if (response.ok) {
-          const data = await response.json();
-          // Remove user from list if role is updated to "admin"
-          setUsers(users.filter(user => user._id !== userId));
+          setUsers(users.filter(user => user._id !== userId)); // ✅ Remove after role change
         } else {
           throw new Error("Failed to update user role");
         }
@@ -73,7 +73,7 @@ const AllAdmins = () => {
     <div className="ml-24 sm:ml-56 h-dvh">
       <div className="bg-blue-100 mt-8 p-4 font-[Chivo]">
         <div className="font-bold text-lg flex gap-1 items-center">
-          <FaClipboardUser className="" size={20} />
+          <FaClipboardUser size={20} />
           <h1>All Admins Data</h1>
         </div>
 
@@ -97,8 +97,8 @@ const AllAdmins = () => {
                 <td className="p-2">
                   <button
                     className={`w-24 p-2 rounded cursor-default ${
-                      user.role === "admin" ? "border-green-500 border" : "border-green-500 border"
-                    } text-black`}
+                      user.role === "admin" ? "border-green-500" : "border-red-500"
+                    } border text-black`}
                   >
                     {user.role}
                   </button>
@@ -111,7 +111,7 @@ const AllAdmins = () => {
                         user.role === "admin" ? "user" : "admin"
                       )
                     }
-                    className="bg-yellow-500 hover:bg-yellow-700 duration-1000 text-white p-2 rounded"
+                    className="bg-yellow-500 hover:bg-yellow-700 duration-700 text-white p-2 rounded"
                   >
                     Make {user.role === "admin" ? "user" : "admin"}
                   </button>
