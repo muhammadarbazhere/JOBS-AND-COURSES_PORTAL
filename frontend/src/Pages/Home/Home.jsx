@@ -19,7 +19,7 @@ function Home() {
 
   const redirectToJobsPage = () => {
     setTimeout(() => {
-      navigate('/remoteJobs');
+      navigate('/Jobs');
     });
   };
 
