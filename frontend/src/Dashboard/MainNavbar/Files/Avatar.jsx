@@ -1,18 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaPowerOff } from "react-icons/fa6";
+// import { FaPowerOff, FaShoppingCart } from "react-icons/fa6";
+import { FaPowerOff } from "react-icons/fa6"; // ✅ PowerOff is from fa6
+import { FaShoppingCart, FaUserCircle } from "react-icons/fa"; // ✅ ShoppingCart is from fa
+
 import { IoPersonAddSharp } from "react-icons/io5";
+import { MdLockReset } from "react-icons/md"; // ✅ Correct Forgot Password icon
+import { RxDashboard } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../../App/AuthSlice";
-import { useNavigate } from "react-router-dom";
-import { FaShoppingCart } from "react-icons/fa";
-import { RxDashboard } from "react-icons/rx";
+import { Link, useNavigate } from "react-router-dom";
 
 function Avatar() {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedin);
-  const token = useSelector((state) => state.auth.token); // ✅ Get token from Redux
+  const token = useSelector((state) => state.auth.token);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -65,24 +68,23 @@ function Avatar() {
   };
 
   // ✅ Fetch Cart
- const fetchCartItems = async () => {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/getUserCart`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setCartItems(data.cart || []); // ✅ Protect against undefined
+  const fetchCartItems = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/getUserCart`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setCartItems(data.cart || []);
+      }
+    } catch (error) {
+      console.error("Cart fetch error:", error);
+      setCartItems([]);
     }
-  } catch (error) {
-    console.error("Cart fetch error:", error);
-    setCartItems([]); // ✅ Ensure cartItems stays an array
-  }
-};
-
+  };
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -93,6 +95,13 @@ function Avatar() {
 
   // ✅ Logout
   const handleLogout = async () => {
+    setIsDropdownOpen(false); // ✅ Close dropdown before logout
+    if (!token) {
+      dispatch(authActions.logout());
+      navigate("/signin");
+      return;
+    }
+
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/route/logout`,
@@ -103,11 +112,10 @@ function Avatar() {
           },
         }
       );
+
       if (res.ok) {
         dispatch(authActions.logout());
         navigate("/signin");
-      } else {
-        throw new Error("Logout failed");
       }
     } catch (error) {
       console.error("Logout error:", error);
@@ -121,13 +129,15 @@ function Avatar() {
     }
   };
 
+  // ✅ Auto close on any link click
+  const closeDropdown = () => setIsDropdownOpen(false);
+
   return (
     <div className="relative mt-2 sm:mt-0" ref={dropdownRef}>
       <p
         id="dropdownHoverButton"
         onClick={openDropdown}
         className="text-gray-600 lg:text-white cursor-pointer font-medium rounded-lg text-lg px-1 py-0 text-center inline-flex items-center gap-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        type="button"
       >
         <div className="w-full h-full">
           {loading ? (
@@ -136,8 +146,8 @@ function Avatar() {
             <div className="relative">
               <img
                 className="sm:w-10 w-12 sm:h-10 h-12 rounded-full border border-white"
-                src={`${import.meta.env.VITE_API_BASE_URL}/${user.image}`}
-                alt="Profile"
+                src={`${import.meta.env.VITE_API_BASE_URL}/route/${user.image}`}
+                alt="User Avatar"
               />
               <span className="bg-green-400 text-white rounded-full px-2 py-2 text-xs absolute top-0 right-0"></span>
             </div>
@@ -159,7 +169,7 @@ function Avatar() {
           aria-labelledby="dropdownHoverButton"
         >
           <li>
-            <a className="flex gap-3 px-4 py-6">
+            <div className="flex gap-3 px-4 py-6">
               <span className="flex text-md flex-col justify-center font-bold">
                 {user && (
                   <>
@@ -170,23 +180,27 @@ function Avatar() {
                   </>
                 )}
               </span>
-            </a>
+            </div>
           </li>
           <hr />
           {isAdmin && (
             <>
-              <a href="/dashboard">
+              <Link
+                to="/dashboard"
+                onClick={closeDropdown}
+              >
                 <div className="flex gap-3 cursor-pointer px-4 py-4 hover:bg-[#4272D7] hover:text-white duration-1000">
                   <RxDashboard size={20} />
                   <span>Dashboard</span>
                 </div>
-              </a>
+              </Link>
               <hr />
             </>
           )}
           <li>
-            <a
-              href="/cart"
+            <Link
+              to="/cart"
+              onClick={closeDropdown}
               className="flex gap-3 cursor-pointer px-4 py-4 hover:bg-[#4272D7] hover:text-white duration-1000"
             >
               <FaShoppingCart size={20} />
@@ -198,17 +212,29 @@ function Avatar() {
                   )}
                 </p>
               </div>
-            </a>
+            </Link>
           </li>
           <hr />
           <li>
-            <a
-              href="/signup"
+            <Link
+              to="/profile"
+              onClick={closeDropdown}
               className="flex gap-3 cursor-pointer px-4 py-4 hover:bg-[#4272D7] hover:text-white duration-1000"
             >
-              <IoPersonAddSharp size={20} />
-              <span>Add another account</span>
-            </a>
+              <FaUserCircle size={20} />
+              <span>Profile</span>
+            </Link>
+          </li>
+          <hr />
+          <li>
+            <Link
+              to="/forgot"
+              onClick={closeDropdown}
+              className="flex gap-3 cursor-pointer px-4 py-4 hover:bg-[#4272D7] hover:text-white duration-1000"
+            >
+              <MdLockReset size={20} /> {/* ✅ Correct icon */}
+              <span>Reset Password</span>
+            </Link>
           </li>
           <hr />
           <li>

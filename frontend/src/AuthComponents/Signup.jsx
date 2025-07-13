@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { FaUser, FaEnvelope } from "react-icons/fa";
-import { MdOutlineWifiPassword } from "react-icons/md";
+import { FaUser, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
+import { MdOutlineWifiPassword, MdOutlineDateRange } from "react-icons/md";
 import logo from "../assets/logo.jpg";
 import { Link, useNavigate } from "react-router-dom";
-import { MdOutlineDateRange } from "react-icons/md";
 
 function Signup() {
   const [inputs, setInputs] = useState({
@@ -14,6 +13,7 @@ function Signup() {
     dateOfBirth: '',
     image: null,
   });
+  const [showPassword, setShowPassword] = useState(false); // 👁️ Add state for password toggle
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -54,11 +54,9 @@ function Signup() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data); // Log response data for debugging
-        navigate("/signin"); // Navigate to sign-in page on successful signup
+        console.log(data);
+        navigate("/signin");
         alert('Account created successfully. Please check your email for confirmation.');
-
-        // Reset form fields after submission
         setInputs({
           firstName: '',
           lastName: '',
@@ -72,7 +70,7 @@ function Signup() {
         throw new Error(errorData.message || "Signup failed");
       }
     } catch (err) {
-      console.log("Error in fetch request:", err); // Log fetch error for debugging
+      console.log("Error in fetch request:", err);
       setError(err.message || "Server error");
     } finally {
       setIsSubmitting(false);
@@ -97,7 +95,7 @@ function Signup() {
                 name="firstName"
                 value={inputs.firstName}
                 onChange={handleChange}
-                className="form-input px-2 mt-1 w-full md:w-[calc(100%-2.5rem)] rounded-lg border border-gray-300 h-10"
+                className="form-input px-2 mt-1 w-full rounded-lg border border-gray-300 h-10"
                 placeholder="First Name"
                 required
               />
@@ -110,7 +108,7 @@ function Signup() {
                 name="lastName"
                 value={inputs.lastName}
                 onChange={handleChange}
-                className="form-input px-2 mt-1  h-10 w-full md:w-[calc(100%-2.5rem)] rounded-lg border border-gray-300"
+                className="form-input px-2 mt-1 h-10 w-full rounded-lg border border-gray-300"
                 placeholder="Last Name"
                 required
               />
@@ -123,44 +121,54 @@ function Signup() {
                 name="email"
                 value={inputs.email}
                 onChange={handleChange}
-                className="form-input px-2 mt-1 w-full md:w-[calc(100%-2.5rem)] border rounded-lg border-gray-300 h-10"
+                className="form-input px-2 mt-1 w-full border rounded-lg border-gray-300 h-10"
                 placeholder="Email Address"
                 required
               />
             </div>
-            <div className="mb-4 flex items-center">
+
+            {/* Password Field with toggle */}
+            <div className="mb-4 flex items-center relative">
               <MdOutlineWifiPassword className="text-[#5F9BCE] mr-2" size={24} />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"} // 👁️ Toggle type
                 id="password"
                 name="password"
                 minLength={8}
                 value={inputs.password}
                 onChange={handleChange}
-                className="form-input mt-1 px-2 w-full md:w-[calc(100%-2.5rem)] border rounded-lg border-gray-300 h-10"
+                className="form-input mt-1 px-2 w-full border rounded-lg border-gray-300 h-10"
                 placeholder="Password"
                 required
               />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </div>
+
             <div className="mb-4 flex items-center">
-            <MdOutlineDateRange className="text-[#5F9BCE] mr-2" size={24} />
+              <MdOutlineDateRange className="text-[#5F9BCE] mr-2" size={24} />
               <input
                 type="date"
                 id="dateOfBirth"
                 name="dateOfBirth"
                 value={inputs.dateOfBirth}
                 onChange={handleChange}
-                className="form-input px-2 mt-1 w-full md:w-[calc(100%-2.5rem)] rounded-lg border border-gray-300 h-10"
+                className="form-input px-2 mt-1 w-full rounded-lg border border-gray-300 h-10"
                 required
               />
             </div>
+
             <div className="mb-4 flex items-center">
               <button
                 type="button"
-                className="bg-gray-200 px-4 py-2  rounded-md hover:bg-gray-300 w-full"
+                className="bg-gray-200 px-4 py-2 rounded-md hover:bg-gray-300 w-full"
               >
                 <label className="w-full text-center flex justify-evenly">
-                 <h5> Upload Image</h5>
+                  <h5>Upload Image</h5>
                   <input
                     type="file"
                     name="image"
@@ -172,6 +180,7 @@ function Signup() {
                 </label>
               </button>
             </div>
+
             <button
               type="submit"
               className="bg-white text-[#5F9BCE] border-2 border-[#5F9BCE] mt-4 px-4 py-2 rounded-md hover:bg-[#5F9BCE] focus:outline-none hover:text-white w-full duration-700 ease-in-out"
@@ -180,11 +189,13 @@ function Signup() {
               {isSubmitting ? "Signing Up..." : "Sign Up"}
             </button>
           </form>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+
+          {error && <p style={{ color: 'red' }} className="mt-2">{error}</p>}
+
           <div className="text-center text-sm mt-2">
             <p>
               Already have an account?{" "}
-              <Link to="/signin" className="text-red-600">
+              <Link to="/signin" className="text-red-600 hover:underline">
                 Sign in
               </Link>
             </p>

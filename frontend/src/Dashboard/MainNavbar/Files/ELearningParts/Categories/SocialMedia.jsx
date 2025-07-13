@@ -76,7 +76,7 @@ function SocialMedia() {
   };
 
   return (
-    <div className="font-[Chivo] bg-blue-100 py-10 px-6 sm:px-10 lg:px-24">
+    <div className="font-[Chivo] bg-blue-100 py-10 px-6 sm:px-10 lg:px-24 min-h-screen">
       <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-center">
         Social Media Marketing Courses
       </h1>
@@ -109,7 +109,7 @@ function SocialMedia() {
               className="w-full sm:max-w-sm rounded-md overflow-hidden bg-white mb-6 border-2 border-white shadow-lg"
             >
               <img
-                src={`${import.meta.env.VITE_API_BASE_URL}/${course.image}`}
+                src={`${import.meta.env.VITE_API_BASE_URL}/route/${course.image}`}
                 className="w-full h-64 object-cover"
                 alt={course.title}
               />

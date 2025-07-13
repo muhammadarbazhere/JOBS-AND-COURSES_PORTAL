@@ -9,7 +9,7 @@ const navigate = useNavigate()
 const onSubmitClick = () => {
 
     setTimeout(() => {
-      window.location.href = '/form'; 
+      navigate('/form'); 
     }, ); 
   };
 

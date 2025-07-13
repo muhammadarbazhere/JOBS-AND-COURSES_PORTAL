@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Enrollmentform = () => {
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -18,12 +19,14 @@ const Enrollmentform = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault(); // ✅ prevent page reload
     console.log('Form submitted:', formData);
 
+    // simulate API call or logic
     setTimeout(() => {
-      window.location.href = '/'; 
-    }, ); 
+      navigate('/'); // ✅ use navigate to go to homepage
+    }, 500);
   };
 
   return (
@@ -66,24 +69,6 @@ const Enrollmentform = () => {
             className="w-full px-4 py-2 border rounded-md"
           />
         </div>
-        {/* <div className="mb-4">
-          <label className="block mb-1">Course:</label>
-          <select
-            name="course"
-            required
-            value={formData.course}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-          >
-            <option value="">Select a course</option>
-            <option value="frontend">Frontend Development</option>
-            <option value="backend">Backend Development</option>
-            <option value="graphic">Graphic Design</option>
-            <option value="seo">Seo</option>
-            <option value="marketing">Social Media Marketing</option>
-            <option value="HR">Human Resource</option>
-          </select>
-        </div> */}
         <div className="mb-4">
           <label className="block mb-1">Home Address:</label>
           <input

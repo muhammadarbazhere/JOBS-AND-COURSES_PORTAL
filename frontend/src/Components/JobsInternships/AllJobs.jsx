@@ -106,7 +106,7 @@ const AllJobs = () => {
   };
 
   return (
-    <div className="font-[Chivo] w-full">
+    <div className="font-[Chivo] w-full ">
       {loading && (
         <div className="flex items-center justify-center mt-10">
           <div className="w-6 h-6 mr-3 border-t-2 border-b-2 border-gray-500 rounded-full animate-spin"></div>

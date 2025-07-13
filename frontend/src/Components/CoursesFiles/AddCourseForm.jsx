@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import logo from "../../assets/logo.jpg";
+import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import logo from "../../assets/logo.jpg";
 
 function AddCourseForm() {
   const navigate = useNavigate();
@@ -35,13 +34,9 @@ function AddCourseForm() {
 
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append("title", formData.title);
-      formDataToSend.append("author", formData.author);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("category", formData.category);
-      formDataToSend.append("duration", formData.duration);
-      formDataToSend.append("charges", formData.charges);
-      formDataToSend.append("image", formData.image);
+      Object.keys(formData).forEach((key) => {
+        formDataToSend.append(key, formData[key]);
+      });
 
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/route/courses/createCourse`,
@@ -59,10 +54,7 @@ function AddCourseForm() {
         throw new Error(errorData.message || "Failed to add course");
       }
 
-      const result = await response.json();
       toast.success("✅ Course added successfully!");
-      console.log(result);
-
       setFormData({
         title: "",
         author: "",
@@ -72,7 +64,6 @@ function AddCourseForm() {
         charges: "",
         image: null,
       });
-
       navigate("/MyCourseList");
     } catch (error) {
       toast.error(error.message || "❌ Error adding the course.");
@@ -82,62 +73,59 @@ function AddCourseForm() {
   };
 
   return (
-    <div className="mx-auto w-full md:w-2/3 lg:w-1/2">
-      <div className="bg-white shadow-md rounded font-[Chivo] px-8 pt-6 pb-8 mb-4">
-        <div className="flex justify-center rounded-md mb-0">
-          <img src={logo} alt="Logo" className="mb-5 h-28 w-28" />
+    <div className="mx-auto mt-0 overflow-hidden sm:mt-4 w-full md:w-2/3 font-[Chivo] lg:w-2/5">
+      <div className="bg-white shadow-md rounded px-8 pb-8 mb-4">
+        <div className="w-full items-center py-6 flex justify-center">
+          <img src={logo} alt="Logo" className="w-24 h-24 rounded-full" />
         </div>
-        <form onSubmit={handleSubmit}>
-          {/* Course Title */}
-          <div className="mb-4">
-            <label className="block mb-2">Course Title</label>
+        <form onSubmit={handleSubmit} className="mx-auto">
+          {/* Title */}
+          <div className="mb-6">
+            <label className="block text-gray-500 text-sm font-bold mb-2">Course Title</label>
             <input
               type="text"
               name="title"
+              placeholder="Course Title"
               value={formData.title}
               onChange={handleChange}
-              placeholder="Course Title.."
               required
-              className="input-style"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-400 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-
           {/* Author */}
-          <div className="mb-4">
-            <label className="block mb-2">Author</label>
+          <div className="mb-6">
+            <label className="block text-gray-500 text-sm font-bold mb-2">Author</label>
             <input
               type="text"
               name="author"
+              placeholder="Author Name"
               value={formData.author}
               onChange={handleChange}
-              placeholder="Course Author.."
               required
-              className="input-style"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-400 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-
           {/* Description */}
-          <div className="mb-4">
-            <label className="block mb-2">Description</label>
+          <div className="mb-6">
+            <label className="block text-gray-500 text-sm font-bold mb-2">Description</label>
             <textarea
               name="description"
+              placeholder="Course Description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Course Description.."
               required
-              className="input-style"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-400 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-
           {/* Category */}
-          <div className="mb-4">
-            <label className="block mb-2">Category</label>
+          <div className="mb-6">
+            <label className="block text-gray-500 text-sm font-bold mb-2">Category</label>
             <select
               name="category"
               value={formData.category}
               onChange={handleChange}
               required
-              className="input-style"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-400 leading-tight focus:outline-none focus:shadow-outline"
             >
               <option value="">Select a category</option>
               <option>Website Development</option>
@@ -149,71 +137,67 @@ function AddCourseForm() {
               <option>Graphic Designing</option>
             </select>
           </div>
-
-          {/* Charges */}
-          <div className="mb-4">
-            <label className="block mb-2">Charges ($)</label>
-            <input
-              type="number"
-              name="charges"
-              value={formData.charges}
-              onChange={handleChange}
-              placeholder="Course Charges.."
-              required
-              className="input-style"
-            />
-          </div>
-
           {/* Duration */}
-          <div className="mb-4">
-            <label className="block mb-2">Duration</label>
+          <div className="mb-6">
+            <label className="block text-gray-500 text-sm font-bold mb-2">Duration</label>
             <input
               type="text"
               name="duration"
+              placeholder="Course Duration (e.g., 4 weeks)"
               value={formData.duration}
               onChange={handleChange}
-              placeholder="Course Duration.."
               required
-              className="input-style"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-400 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-
+          {/* Charges */}
+          <div className="mb-6">
+            <label className="block text-gray-500 text-sm font-bold mb-2">Charges ($)</label>
+            <input
+              type="number"
+              name="charges"
+              placeholder="Charges"
+              value={formData.charges}
+              onChange={handleChange}
+              required
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-400 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
           {/* Image Upload */}
-          <div className="mb-4">
-            <label className="block mb-2">Course Image</label>
+          <div className="mb-6">
+            <label className="block text-gray-500 text-sm font-bold mb-2">Course Image</label>
             <input
               type="file"
               name="image"
               accept="image/*"
               onChange={handleChange}
               required
-              className="input-style"
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0 file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
           </div>
-
           {/* Image Preview */}
           {formData.image && (
-            <div className="mb-4">
+            <div className="mb-6">
               <img
                 src={URL.createObjectURL(formData.image)}
                 alt="Preview"
-                className="object-contain h-40 w-full"
+                className="object-cover h-40 w-full rounded"
               />
             </div>
           )}
-
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
             className={`bg-blue-500 ${
-              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
-            } w-full rounded-xl text-white font-bold py-2 px-4 focus:outline-none`}
+              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"
+            } w-full rounded-xl text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline`}
           >
             {loading ? "Adding..." : "Add Course"}
           </button>
         </form>
-        <ToastContainer />
       </div>
     </div>
   );

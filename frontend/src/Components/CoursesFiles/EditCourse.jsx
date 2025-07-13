@@ -235,7 +235,7 @@ const EditCourse = () => {
               {/* ✅ Preview existing image or selected new image */}
               {updateData.image && typeof updateData.image === 'string' && (
                 <img
-                  src={`${import.meta.env.VITE_API_BASE_URL}/${updateData.image}`}
+                  src={`${import.meta.env.VITE_API_BASE_URL}/route/${updateData.image}`}
                   alt="Course"
                   className="mt-3 object-contain h-40 w-full"
                 />

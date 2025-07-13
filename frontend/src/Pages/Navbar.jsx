@@ -27,34 +27,43 @@ function Navbar() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedin);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/user`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-             Authorization: `Bearer ${token}`,
-          },
-          
-        });
+  const fetchUserData = async () => {
+  if (!token) {
+    console.warn("No token available, user probably not logged in");
+    return;
+  }
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/user`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("User data:", data);
-
-        if (data.user.role === "admin") {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setIsAdmin(false);
+    if (!response.ok) {
+      if (response.status === 401) {
+        console.error("❌ Unauthorized - logging out user");
+        dispatch(authActions.logout());
+        navigate("/signin");
       }
-    };
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("User data:", data);
+
+    if (data.user.role === "admin") {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    setIsAdmin(false);
+  }
+};
+
 
     fetchUserData();
   }, [isLoggedIn]);
@@ -72,13 +81,13 @@ function Navbar() {
   };
   const handleLogoClicked = () => {
     setTimeout(() => {
-      window.location.href = '/'; 
+      navigate('/'); 
     }, ); 
   }
 
   return (
     <nav className="bg-blue-100 sticky top-0 z-50 text-[#374151] border-gray-200 dark:bg-gray-900">
-      <div className="w-full xl:px-24 flex flex-wrap flex-row md:flex-row md:items-center items-start justify-between text-[#374151] mx-0 lg:mx-0 px-2">
+      <div className="w-full xl:px-20 flex flex-wrap flex-row md:flex-row md:items-center items-start justify-between text-[#374151] mx-0 lg:mx-0 px-2">
         <div className="flex items-center">
           <NavLink
           onClick={handleLogoClicked}
@@ -94,7 +103,7 @@ function Navbar() {
         </div>
 
         {isLoggedIn && (
-          <div className="hidden md:hidden lg:flex lg:items-center lg:space-x-3 lg:rtl:space-x-reverse font-[Chivo]">
+          <div className="hidden md:hidden lg:flex lg:items-center lg:space-x-1 lg:rtl:space-x-reverse font-[Chivo]">
             <NavLink
               onClick={() => handleNavLinkClick("home")}
               to="/"
@@ -106,25 +115,16 @@ function Navbar() {
             </NavLink>
             <span className="px-2"></span>
             <NavLink
-              onClick={() => handleNavLinkClick("remoteJobs")}
-              to="remoteJobs"
+              onClick={() => handleNavLinkClick("Jobs")}
+              to="Jobs"
               className={`hover:underline ${
-                activeNavLink === "remoteJobs" ? "text-blue-500" : ""
+                activeNavLink === "Jobs" ? "text-blue-500" : ""
               }`}
             >
-              REMOTE JOBS
+              JOBS
             </NavLink>
             <span className="px-2"></span>
-            <NavLink
-              onClick={() => handleNavLinkClick("outSourcing")}
-              to="outSourcing"
-              className={`hover:underline ${
-                activeNavLink === "outSourcing" ? "text-blue-500" : ""
-              }`}
-            >
-              BUSINESS OUTSOURCING
-            </NavLink>
-            <span className="px-2"></span>
+           
             <NavLink
               onClick={() => handleNavLinkClick("learning")}
               to="learning"
@@ -145,6 +145,24 @@ function Navbar() {
               ABOUT US
             </NavLink>
             <span className="px-2"></span>
+
+
+
+            <NavLink
+              onClick={() => handleNavLinkClick("contact")}
+              to="contact"
+              className={`hover:underline ${
+                activeNavLink === "contact" ? "text-blue-500" : ""
+              }`}
+            >
+              CONTACT US
+            </NavLink>
+            <span className="px-2"></span>
+
+
+
+
+
             {isAdmin && (
               <NavLink
                 onClick={() => handleNavLinkClick("MyAdmin")}
@@ -228,23 +246,15 @@ function Navbar() {
               HOME
             </NavLink>
             <NavLink
-              onClick={() => handleNavLinkClick("remoteJobs")}
-              to="remoteJobs"
+              onClick={() => handleNavLinkClick("Jobs")}
+              to="Jobs"
               className={`block bg-blue-600 px-4 py-3 mb-1 rounded-lg text-md text-white dark:text-gray-200 hover:bg-black ${
-                activeNavLink === "remoteJobs" ? "bg-teal-800" : ""
+                activeNavLink === "Jobs" ? "bg-teal-800" : ""
               }`}
             >
-              REMOTE JOBS
+              JOBS
             </NavLink>
-            <NavLink
-              onClick={() => handleNavLinkClick("outSourcing")}
-              to="outSourcing"
-              className={`block bg-blue-600 px-4 py-3 mb-1 rounded-lg text-md text-white dark:text-gray-200 hover:bg-black ${
-                activeNavLink === "outSourcing" ? "bg-teal-800" : ""
-              }`}
-            >
-              BUSINESS OUTSOURCING
-            </NavLink>
+         
             <NavLink
               onClick={() => handleNavLinkClick("learning")}
               to="learning"
@@ -262,6 +272,15 @@ function Navbar() {
               }`}
             >
               ABOUT US
+            </NavLink>
+             <NavLink
+              onClick={() => handleNavLinkClick("contact")}
+              to="contact"
+              className={`block bg-blue-600 px-4 py-3 mb-1 rounded-lg text-md text-white dark:text-gray-200 hover:bg-black ${
+                activeNavLink === "contact" ? "bg-teal-800" : ""
+              }`}
+            >
+              CONTACT US
             </NavLink>
             {isAdmin && (
               <NavLink

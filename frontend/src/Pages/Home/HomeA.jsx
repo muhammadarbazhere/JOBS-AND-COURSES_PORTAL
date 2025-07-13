@@ -1,12 +1,14 @@
 import React from 'react'
 import homeImg from '../../assets/home1.jpg'
+import { useNavigate } from 'react-router-dom';
 
 function HomeA() {
+  const navigate = useNavigate();
  
   const redirectToCoursesPage = () => {
 
     setTimeout(() => {
-      window.location.href = '/learning'; 
+       navigate('/learning');
     }, ); 
   };
 

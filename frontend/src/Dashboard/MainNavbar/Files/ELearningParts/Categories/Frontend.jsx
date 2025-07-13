@@ -40,7 +40,7 @@ function Backend() {
   };
 
   const backendCourses = courses.filter(
-    (course) => course.category === 'Back-End Development'
+    (course) => course.category === 'Front-End Development'
   );
 
   const indexOfLastCourse = currentPage * postsPerPage;
@@ -80,9 +80,9 @@ function Backend() {
   };
 
   return (
-    <div className="font-[Chivo] bg-blue-100 py-10 px-6 sm:px-10 lg:px-24">
+    <div className="font-[Chivo] bg-blue-100 py-10 px-6 sm:px-10 lg:px-24 min-h-screen">
       <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-center">
-        Back-End Courses
+        Frontend Courses
       </h1>
 
       <div className="flex justify-end py-4">
@@ -102,7 +102,7 @@ function Backend() {
       ) : backendCourses.length === 0 ? (
         <div className="flex justify-center h-full">
           <p className="text-lg text-center pt-12 text-gray-700 font-bold">
-            No backend courses available
+            No frontend courses available
           </p>
         </div>
       ) : (
@@ -113,7 +113,7 @@ function Backend() {
               className="w-full sm:max-w-sm rounded-md overflow-hidden bg-white mb-6 border-2 border-white shadow-lg"
             >
               <img
-                src={`${import.meta.env.VITE_API_BASE_URL}/${course.image}`}
+                src={`${import.meta.env.VITE_API_BASE_URL}/route/${course.image}`}
                 className="w-full h-64 object-cover"
                 alt={course.title}
               />

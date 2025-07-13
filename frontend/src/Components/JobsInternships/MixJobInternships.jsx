@@ -3,6 +3,7 @@ import { FaBriefcase, FaCalendarAlt, FaInfoCircle, FaTimesCircle } from "react-i
 import { IoMdAlert } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { motion } from "framer-motion"; // ✅ Add framer-motion
 
 const MixJobInternships = () => {
   const [jobs, setJobs] = useState([]);
@@ -52,12 +53,22 @@ const MixJobInternships = () => {
   };
 
   return (
-    <div className="font-Chivo h-full w-full p-4">
-      <div className="w-full space-y-1 mb-8 flex flex-col items-center">
+    <motion.div
+      className="font-Chivo h-full w-full p-4 bg-blue-100"
+      initial={{ opacity: 0, x: -100 }} // 👈 Start off-screen to the left
+      animate={{ opacity: 1, x: 0 }}     // 👈 Animate to visible
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      <motion.div
+        className="w-full space-y-1 mb-8 flex flex-col items-center"
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.3, duration: 0.8 }}
+      >
         <h1 className="font-Comfortaa mb-2 font-bold text-3xl sm:text-4xl text-gray-800 text-transparent bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text">
           Current Openings
         </h1>
-      </div>
+      </motion.div>
 
       {loading && (
         <div className="flex items-center justify-center mt-10">
@@ -74,9 +85,28 @@ const MixJobInternships = () => {
         <p className="text-center mt-3">No jobs or internships available.</p>
       )}
       {!loading && !error && jobs.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 2xl:gap-14 px-4">
-          {jobs.map((job) => (
-            <div key={job._id} className="bg-white shadow-md rounded-lg overflow-hidden transform transition-all hover:scale-105">
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 2xl:gap-14 px-4"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            visible: {
+              transition: {
+                staggerChildren: 0.15, // 👈 Stagger animation for each card
+              },
+            },
+          }}
+        >
+          {jobs.map((job, index) => (
+            <motion.div
+              key={job._id}
+              className="bg-white shadow-md rounded-lg overflow-hidden transform transition-all hover:scale-105"
+              variants={{
+                hidden: { opacity: 0, x: -50 },
+                visible: { opacity: 1, x: 0 },
+              }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="p-4">
                 <div className="flex justify-between items-center mb-4">
                   <span className={`text-sm ${job.jobOrInternship === 'job' ? 'bg-blue-100 text-blue-600' : 'bg-yellow-100 text-yellow-600'} px-2 py-1 rounded-full`}>
@@ -111,11 +141,11 @@ const MixJobInternships = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

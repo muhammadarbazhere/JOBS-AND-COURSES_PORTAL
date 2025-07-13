@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { MdDashboardCustomize, MdPerson } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 function User() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -43,30 +44,30 @@ function User() {
           aria-labelledby="dropdownHoverButton"
         >
           <li>
-            <a
-              href="MyLogin"
+            <Link
+              to="/MyLogin"
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
            Login
-            </a>
+            </Link>
           </li>
           <hr />
           <li>
-            <a
-              href="MyRegister"
+            <Link
+              to="/MyRegister"
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
              Register
-            </a>
+            </Link>
           </li>
           <hr />
           <li>
-            <a
-              href="MyForgetPassword"
+            <Link
+              to="/MyForgetPassword"
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Forget Password
-            </a>
+            </Link>
           </li>
 
         </ul>

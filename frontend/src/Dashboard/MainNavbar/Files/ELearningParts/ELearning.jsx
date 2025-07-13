@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MdComputer } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 function ELearning() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -23,6 +24,10 @@ function ELearning() {
     };
   }, []);
 
+  const closeDropdown = () => {
+    setIsDropdownOpen(false);
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       <p
@@ -36,75 +41,80 @@ function ELearning() {
 
       <div
         id="dropdownHover"
-        className={`absolute top-full -left-10 sm:left-0 z-10 ${
-          isDropdownOpen ? "" : "hidden"
-        } bg-white divide-y divide-gray-100 rounded-lg w-56 sm:shadow sm:w-60`}
+        className={`absolute top-full -left-10 sm:left-0 z-10 ${isDropdownOpen ? "" : "hidden"} bg-white divide-y divide-gray-100 rounded-lg w-56 sm:shadow sm:w-60`}
       >
         <ul
-          className="py-1 text-md text-gray-700 font-[Chivo]"
+          className="py-1 text-md text-gray-700 font-[Chivo] "
           aria-labelledby="dropdownHoverButton"
         >
           <li>
-            <a
-              href="/MyWebsiteDevelopment"
+            <Link
+              to="/MyWebsiteDevelopment"
+              onClick={closeDropdown}
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Website Development
-            </a>
+            </Link>
           </li>
           <hr />
           <li>
-            <a
-              href="/MyFrontend"
+            <Link
+              to="/MyFrontend"
+              onClick={closeDropdown}
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Front-End Development
-            </a>
+            </Link>
           </li>
           <hr />
           <li>
-            <a
-              href="/MyBackend"
+            <Link
+              to="/MyBackend"
+              onClick={closeDropdown}
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Back-End Development
-            </a>
+            </Link>
           </li>
           <hr />
           <li>
-            <a
-              href="/MyGraphic"
+            <Link
+              to="/MyGraphic"
+              onClick={closeDropdown}
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Graphic Designing
-            </a>
+            </Link>
           </li>
           <hr />
           <li>
-            <a
-              href="/MySocial"
+            <Link
+              to="/MySocial"
+              onClick={closeDropdown}
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Social Media Marketing
-            </a>
+            </Link>
           </li>
           <hr />
           <li>
-            <a
-              href="/MySeo"
+            <Link
+              to="/MySeo"
+              onClick={closeDropdown}
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               SEO
-            </a>
+            </Link>
           </li>
           <hr />
           <li>
-            <a
-              href="/MyHR"
+            <Link
+              to="/MyHR"
+              onClick={closeDropdown}
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Human Resource
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

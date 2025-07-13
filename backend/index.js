@@ -12,7 +12,6 @@ const courseRoutes = require("./routes/CourseRoutes");
 const jobInternshipRoutes = require('./routes/JobRoutes');
 const applyJobRoutes = require('./routes/applyJobRoutes');
 const cartRoutes = require('./routes/cartRoutes');
-const payPalRoutes = require('./routes/paypalRoutes');
 const creditCardRoutes = require('./routes/creditRoutes');
 
 const app = express();
@@ -31,6 +30,7 @@ const corsOptions = {
     process.env.FRONTEND_BASE_URL,    // ✅ Production frontend from .env
     "http://localhost:5173"           // ✅ Local frontend
   ],
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
@@ -51,7 +51,6 @@ app.use("/route/courses", courseRoutes);
 app.use("/route/cart", cartRoutes);
 app.use('/route/jobs-internships', jobInternshipRoutes);
 app.use("/route/form", applyJobRoutes);
-app.use("/route/payment", payPalRoutes);
 app.use("/route/payment", creditCardRoutes);
 
 // ✅ Root route to test Render deployment

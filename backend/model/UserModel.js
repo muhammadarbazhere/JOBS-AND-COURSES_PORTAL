@@ -35,7 +35,22 @@ const userSchema = mongoose.Schema({
             course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
             quantity: { type: Number, default: 1 }
         }]
-    }
+    },
+
+
+   
+    resetCode: {
+    type: Number,
+    default: null,        // 👈 Default to null
+  },
+  resetCodeExpiry: {
+    type: Date,
+    default: null,        // 👈 Default to null
+  },
+
+
+
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

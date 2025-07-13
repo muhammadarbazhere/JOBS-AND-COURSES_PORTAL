@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiAward } from "react-icons/fi";
+import { Link } from 'react-router-dom';
 
 function Career() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const openDropdown = () => {
     setIsDropdownOpen(true);
+  };
+
+  const closeDropdown = () => {
+    setIsDropdownOpen(false);
   };
 
   const dropdownRef = useRef(null);
@@ -31,10 +36,9 @@ function Career() {
         className="text-gray-800 cursor-pointer font-medium rounded-lg text-lg px-1 py-0 text-center inline-flex items-center gap-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
         type="button"
       >
-        <p className='flex items-center gap-2'>
-          <span><FiAward size={20} /></span> 
-          <h1>Career</h1>  
-        </p>
+        <span className='flex items-center gap-2'>
+          <FiAward size={20} /> <h1>Career</h1>
+        </span>
       </p>
 
       {/* Dropdown menu */}
@@ -44,11 +48,23 @@ function Career() {
       >
         <ul className="py-0 text-md text-gray-700 font-[Chivo] dark:text-gray-200" aria-labelledby="dropdownHoverButton">
           <li>
-            <a href="MyJobs" className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out">Job</a>
+            <Link
+              to="/MyJobs"
+              onClick={closeDropdown}
+              className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
+            >
+              Job
+            </Link>
           </li>
           <hr />
           <li>
-            <a href="MyInternships" className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out">Internship</a>
+            <Link
+              to="/MyInternships"
+              onClick={closeDropdown}
+              className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
+            >
+              Internship
+            </Link>
           </li>
         </ul>
       </div>

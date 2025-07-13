@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 function Cart() {
@@ -22,7 +22,6 @@ function Cart() {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/cart/getUserCart`, {
         method: "GET",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -59,7 +58,6 @@ function Cart() {
         `${import.meta.env.VITE_API_BASE_URL}/route/cart/deleteCart/${courseId}`,
         {
           method: "DELETE",
-          credentials: "include",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`, 
@@ -109,7 +107,7 @@ function Cart() {
   };
 
   return (
-    <div className="bg-blue-100 pb-10">
+    <div className="bg-blue-100 h-dvh pb-10">
       <div className="font-[Chivo] py-10 px-4 lg:px-6 xl:px-20">
         <div className="w-full space-y-1 mb-2 flex flex-col items-start md:px-2">
           <p className="font-[Chivo] text-md mb-4 font-bold sm:text-3xl text-[#272727]">
@@ -124,15 +122,14 @@ function Cart() {
 
         {cart.length === 0 ? (
           <div className="flex justify-center h-full flex-col items-center">
-            <p className="text-lg text-center pt-12 text-gray-700 font-bold mb-4">
+            <p className="text-lg text-center pt-32 text-gray-700 font-bold mb-4">
               Your cart is empty. Keep shopping to find a course!
             </p>
-            <a
-              href="/learning"
+            <Link to="/learning"
               className="bg-pink-600 text-white py-2 px-4 rounded-md hover:bg-pink-800 duration-1000"
             >
               Keep Shopping
-            </a>
+            </Link>
           </div>
         ) : (
           <div className="flex flex-col-reverse lg:flex-row lg:justify-between lg:items-start">
@@ -143,7 +140,7 @@ function Cart() {
                   className="w-full mb-6 bg-white border-2 border-gray-200 rounded-md shadow-lg overflow-hidden flex flex-col sm:flex-row"
                 >
                   <img
-                    src={`${import.meta.env.VITE_API_BASE_URL}/${course.image}`}
+                    src={`${import.meta.env.VITE_API_BASE_URL}/route/${course.image}`}
                     className="w-full sm:w-40 h-40 object-cover"
                     alt={course.title}
                   />

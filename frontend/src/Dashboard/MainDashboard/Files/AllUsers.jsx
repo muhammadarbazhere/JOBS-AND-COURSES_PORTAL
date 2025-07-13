@@ -7,7 +7,7 @@ const AllUsers = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const token = useSelector((state) => state.auth.token); // ✅ Get token from Redux
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,13 +17,13 @@ const AllUsers = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // ✅ Send token in header
+            Authorization: `Bearer ${token}`,
           },
         });
 
         if (response.ok) {
           const data = await response.json();
-          const filteredUsers = data.users.filter(user => user.role === "user"); // ✅ Show users only
+          const filteredUsers = data.users.filter(user => user.role === "user");
           setUsers(filteredUsers);
         } else {
           throw new Error("Failed to fetch user data");
@@ -55,7 +55,7 @@ const AllUsers = () => {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // ✅ Include token
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({ userId, newRole }),
           }
@@ -75,58 +75,96 @@ const AllUsers = () => {
   };
 
   return (
-    <div className="ml-24 sm:ml-56 h-dvh">
-      <div className="bg-blue-100 mt-8 p-4 font-[Chivo]">
-        <div className="font-bold text-lg flex gap-1 items-center">
+    <div className="min-h-screen bg-gray-900 text-white">
+      <div className="bg-gray-800 mt-8 p-4 font-[Chivo] rounded-lg shadow">
+        <div className="font-bold text-lg flex gap-1 items-center mb-4">
           <FaClipboardUser size={20} />
           <h1>All Users Data</h1>
         </div>
 
-        {loading && <p>Loading...</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        {loading && <p className="text-gray-300">Loading...</p>}
+        {error && <p className="text-red-400">{error}</p>}
 
-        <table className="w-full mt-4">
-          <thead>
-            <tr className="bg-gray-200 text-center font-bold">
-              <th className="p-2">NAME</th>
-              <th className="p-2">EMAIL</th>
-              <th className="p-2">ROLE</th>
-              <th className="p-2">ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user._id} className="bg-white text-center">
-                <td className="p-2">{`${user.firstName} ${user.lastName}`}</td>
-                <td className="p-2">{user.email}</td>
-                <td className="p-2">
-                  <button
-                    className={`w-24 p-2 rounded cursor-default ${
-                      user.role === "admin"
-                        ? "border-green-500 border"
-                        : "border-blue-500 border"
-                    } text-black`}
-                  >
-                    {user.role}
-                  </button>
-                </td>
-                <td className="p-2">
-                  <button
-                    onClick={() =>
-                      handleRoleChange(
-                        user._id,
-                        user.role === "admin" ? "user" : "admin"
-                      )
-                    }
-                    className="bg-yellow-500 hover:bg-yellow-700 duration-700 text-white p-2 rounded"
-                  >
-                    Make {user.role === "admin" ? "user" : "admin"}
-                  </button>
-                </td>
+        {/* Responsive Table for Large Screens */}
+        <div className="hidden sm:block">
+          <table className="w-full mt-4 text-white">
+            <thead>
+              <tr className="bg-gray-700 text-center font-bold">
+                <th className="p-2">NAME</th>
+                <th className="p-2">EMAIL</th>
+                <th className="p-2">ROLE</th>
+                <th className="p-2">ACTIONS</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user._id} className="bg-gray-800 border-b border-gray-700 text-center">
+                  <td className="p-2">{`${user.firstName} ${user.lastName}`}</td>
+                  <td className="p-2">{user.email}</td>
+                  <td className="p-2">
+                    <span
+                      className={`inline-block px-3 py-1 rounded-full text-sm ${
+                        user.role === "admin"
+                          ? "bg-green-800 text-green-200 border border-green-600"
+                          : "bg-blue-800 text-blue-200 border border-blue-600"
+                      }`}
+                    >
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="p-2">
+                    <button
+                      onClick={() =>
+                        handleRoleChange(
+                          user._id,
+                          user.role === "admin" ? "user" : "admin"
+                        )
+                      }
+                      className="bg-yellow-600 hover:bg-yellow-700 duration-300 text-white px-3 py-1 rounded"
+                    >
+                      Make {user.role === "admin" ? "user" : "admin"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile-Friendly Cards for Small Screens */}
+        <div className="sm:hidden space-y-4">
+          {users.map((user) => (
+            <div
+              key={user._id}
+              className="bg-gray-800 rounded-lg shadow p-4 flex flex-col gap-2"
+            >
+              <div className="flex justify-between items-center">
+                <h2 className="font-bold text-base">{`${user.firstName} ${user.lastName}`}</h2>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs ${
+                    user.role === "admin"
+                      ? "bg-green-800 text-green-200 border border-green-600"
+                      : "bg-blue-800 text-blue-200 border border-blue-600"
+                  }`}
+                >
+                  {user.role}
+                </span>
+              </div>
+              <p className="text-sm text-gray-400">📧 {user.email}</p>
+              <button
+                onClick={() =>
+                  handleRoleChange(
+                    user._id,
+                    user.role === "admin" ? "user" : "admin"
+                  )
+                }
+                className="bg-yellow-600 hover:bg-yellow-700 duration-300 text-white px-3 py-1 rounded text-sm"
+              >
+                Make {user.role === "admin" ? "user" : "admin"}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

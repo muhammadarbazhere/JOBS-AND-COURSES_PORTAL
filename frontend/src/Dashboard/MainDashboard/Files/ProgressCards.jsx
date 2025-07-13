@@ -1,64 +1,77 @@
 import React, { useEffect, useState } from 'react';
-import { FaUsers, FaShoppingBag, FaCalendarCheck, FaDollarSign } from 'react-icons/fa';
+import { FaUsers, FaBook, FaBriefcase, FaUserGraduate } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
 const ProgressCards = () => {
   const [counts, setCounts] = useState({
     students: 0,
-    coursesSold: 0,
-    thisWeek: 0,
-    earnings: 0,
+    courses: 0,
+    jobs: 0,
+    internships: 0,
   });
 
-  const token = useSelector((state) => state.auth.token); // ✅ Get token from Redux
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
+    if (!token) {
+      console.warn("No token - skipping dashboard API call");
+      return;
+    }
     fetchData();
   }, [token]);
 
   const fetchData = async () => {
-    try {
-      // Fetch Users
-      const userRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/allUsers`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, // ✅ Auth header
-        },
-      });
-      const userData = await userRes.json();
+    if (!token) return;
 
-      // Fetch Orders or Earnings (if available in your backend)
-      const orderRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/cart/getCartData`, {
+    try {
+      // Fetch users
+      const userRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/allUsers`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
-      const orderData = await orderRes.json();
+      const userData = await userRes.json();
+
+      // Fetch courses
+      const courseRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/courses/getCourses`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const coursesData = await courseRes.json();
+
+      // Fetch jobs
+      const jobsRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/getAllJobs`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const jobsData = await jobsRes.json();
+
+      // Split jobs and internships count
+      const jobsCount = jobsData.filter(item => item.jobOrInternship === 'job').length;
+      const internshipsCount = jobsData.filter(item => item.jobOrInternship === 'internship').length;
 
       setCounts({
         students: userData.users?.length || 0,
-        coursesSold: orderData.cartItems?.length || 10, // Replace 10 with real data if you have
-        thisWeek: 5, // Example static
-        earnings: orderData.totalAmount || 500, // Example, adjust based on backend
+        courses: coursesData?.length || 0,
+        jobs: jobsCount,
+        internships: internshipsCount,
       });
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error('Error fetching dashboard data:', error.message);
     }
   };
 
-  // ✅ Animate numbers the React way
   const AnimatedNumber = ({ target }) => {
     const [count, setCount] = useState(0);
-
     useEffect(() => {
       let start = 0;
       const end = target;
       if (start === end) return;
-
       const incrementTime = 20;
       const increment = Math.ceil(end / 100);
-
       const timer = setInterval(() => {
         start += increment;
         if (start >= end) {
@@ -67,53 +80,39 @@ const ProgressCards = () => {
         }
         setCount(start);
       }, incrementTime);
-
       return () => clearInterval(timer);
     }, [target]);
-
-    return <h1 className="text-blue-500">{count}</h1>;
+    return <h1 className="text-3xl font-bold text-white">{count}</h1>;
   };
 
   return (
-    <div className="ml-32 sm:ml-56">
-      <div className="flex flex-row w-full items-center font-Chivo justify-around py-5 text-base sm:text-xl gap-2">
-        
-        {/* Members */}
-        <div className="space-y-1 bg-white w-2/6 sm:w-1/5 h-28 px-1 sm:px-4 py-4">
-          <p className="flex flex-col">
-            <FaUsers className="text-blue-500 text-2xl" />
-            <AnimatedNumber target={counts.students} />
-            <h5 className="text-xs text-gray-400">MEMBERS ONLINE</h5>
-          </p>
-        </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-6 px-2">
+      {/* Card 1: Members */}
+      <div className="bg-gray-800/50 backdrop-blur-lg border border-blue-500/30 rounded-2xl p-5 flex flex-col items-start justify-center shadow-lg hover:shadow-blue-500/30 transition-all duration-300">
+        <FaUsers className="text-blue-400 text-4xl mb-2 drop-shadow-lg" />
+        <AnimatedNumber target={counts.students} />
+        <h5 className="text-sm text-gray-400 mt-1 tracking-wide">MEMBERS ONLINE</h5>
+      </div>
 
-        {/* Courses Sold */}
-        <div className="space-y-1 bg-white w-2/6 sm:w-1/5 h-28 px-1 sm:px-4 py-4">
-          <p className="flex flex-col">
-            <FaShoppingBag className="text-blue-500 text-2xl" />
-            <AnimatedNumber target={counts.coursesSold} />
-            <h5 className="text-xs text-gray-400">COURSES SOLD</h5>
-          </p>
-        </div>
+      {/* Card 2: Courses */}
+      <div className="bg-gray-800/50 backdrop-blur-lg border border-green-500/30 rounded-2xl p-5 flex flex-col items-start justify-center shadow-lg hover:shadow-green-500/30 transition-all duration-300">
+        <FaBook className="text-green-400 text-4xl mb-2 drop-shadow-lg" />
+        <AnimatedNumber target={counts.courses} />
+        <h5 className="text-sm text-gray-400 mt-1 tracking-wide">COURSES</h5>
+      </div>
 
-        {/* This Week */}
-        <div className="space-y-1 bg-white w-2/6 sm:w-1/5 h-28 px-1 sm:px-4 py-4">
-          <p className="flex flex-col">
-            <FaCalendarCheck className="text-blue-500 text-2xl" />
-            <AnimatedNumber target={counts.thisWeek} />
-            <h5 className="text-xs text-gray-400">THIS WEEK</h5>
-          </p>
-        </div>
+      {/* Card 3: Jobs */}
+      <div className="bg-gray-800/50 backdrop-blur-lg border border-orange-500/30 rounded-2xl p-5 flex flex-col items-start justify-center shadow-lg hover:shadow-orange-500/30 transition-all duration-300">
+        <FaBriefcase className="text-orange-400 text-4xl mb-2 drop-shadow-lg" />
+        <AnimatedNumber target={counts.jobs} />
+        <h5 className="text-sm text-gray-400 mt-1 tracking-wide">JOBS</h5>
+      </div>
 
-        {/* Earnings */}
-        <div className="space-y-1 bg-white w-2/6 sm:w-1/5 h-28 px-1 sm:px-4 py-4">
-          <p className="flex flex-col">
-            <FaDollarSign className="text-blue-500 text-2xl" />
-            <AnimatedNumber target={counts.earnings} />
-            <h5 className="text-xs text-gray-400">TOTAL EARNINGS</h5>
-          </p>
-        </div>
-
+      {/* Card 4: Internships */}
+      <div className="bg-gray-800/50 backdrop-blur-lg border border-purple-500/30 rounded-2xl p-5 flex flex-col items-start justify-center shadow-lg hover:shadow-purple-500/30 transition-all duration-300">
+        <FaUserGraduate className="text-purple-400 text-4xl mb-2 drop-shadow-lg" />
+        <AnimatedNumber target={counts.internships} />
+        <h5 className="text-sm text-gray-400 mt-1 tracking-wide">INTERNSHIPS</h5>
       </div>
     </div>
   );

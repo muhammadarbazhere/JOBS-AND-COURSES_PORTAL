@@ -1,6 +1,8 @@
 import React from 'react';
-import { Card, CardContent, Tabs, Tab } from '@mui/material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { Tabs, Tab } from '@mui/material';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -37,67 +39,88 @@ const Report = () => {
   };
 
   return (
-    <div className='w-2/4 sm:w-[71%]'>
-      <div className="flex flex-col p-4 font-[Chivo] bg-white shadow-md rounded-md">
+    <div className="w-full px-2">
+      <div className="flex flex-col font-[Chivo] bg-gray-900/70 backdrop-blur-lg rounded-2xl border border-gray-800 shadow-lg p-4 hover:shadow-blue-500/30 transition-all duration-300">
         <div className="pb-2">
-          <h2 className="font-semibold text-base sm:text-xl text-gray-700">Recent Reports</h2>
+          <h2 className="font-semibold text-lg sm:text-2xl text-gray-200">📊 Dashboard Reports</h2>
         </div>
 
-        <Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary">
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          indicatorColor="secondary"
+          textColor="inherit"
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            '& .MuiTab-root': { color: '#9CA3AF', fontWeight: 500 },
+            '& .Mui-selected': { color: '#38BDF8' },
+            '& .MuiTabs-indicator': { backgroundColor: '#38BDF8' },
+          }}
+        >
           <Tab label="Courses" />
           <Tab label="Jobs" />
           <Tab label="Internships" />
         </Tabs>
 
-        <Slider {...settings}>
+        <Slider {...settings} className="mt-4">
+          {/* Courses Chart */}
           {value === 0 && (
-            <div>
-              <Card>
-                <CardContent>
-                  <LineChart width={500} height={300} data={data}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="courses" stroke="#8884d8" activeDot={{ r: 8 }} />
-                  </LineChart>
-                </CardContent>
-              </Card>
+            <div className="bg-gray-800/80 rounded-xl border border-blue-500/30 shadow-md hover:shadow-blue-500/40 transition-all duration-300">
+              <div className="p-3">
+                <div className="h-[250px] sm:h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis dataKey="month" stroke="#D1D5DB" />
+                      <YAxis stroke="#D1D5DB" />
+                      <Tooltip contentStyle={{ backgroundColor: "#1F2937", color: "#F9FAFB", border: '1px solid #3B82F6' }} />
+                      <Legend wrapperStyle={{ color: "#F9FAFB" }} />
+                      <Line type="monotone" dataKey="courses" stroke="#3B82F6" strokeWidth={2} activeDot={{ r: 6 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </div>
           )}
 
+          {/* Jobs Chart */}
           {value === 1 && (
-            <div>
-              <Card>
-                <CardContent>
-                  <LineChart width={500} height={300} data={data}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="jobs" stroke="#82ca9d" activeDot={{ r: 8 }} />
-                  </LineChart>
-                </CardContent>
-              </Card>
+            <div className="bg-gray-800/80 rounded-xl border border-green-500/30 shadow-md hover:shadow-green-500/40 transition-all duration-300">
+              <div className="p-3">
+                <div className="h-[250px] sm:h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis dataKey="month" stroke="#D1D5DB" />
+                      <YAxis stroke="#D1D5DB" />
+                      <Tooltip contentStyle={{ backgroundColor: "#1F2937", color: "#F9FAFB", border: '1px solid #10B981' }} />
+                      <Legend wrapperStyle={{ color: "#F9FAFB" }} />
+                      <Line type="monotone" dataKey="jobs" stroke="#10B981" strokeWidth={2} activeDot={{ r: 6 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </div>
           )}
 
+          {/* Internships Chart */}
           {value === 2 && (
-            <div>
-              <Card>
-                <CardContent>
-                  <LineChart width={500} height={300} data={data}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="internships" stroke="#ffc658" activeDot={{ r: 8 }} />
-                  </LineChart>
-                </CardContent>
-              </Card>
+            <div className="bg-gray-800/80 rounded-xl border border-yellow-500/30 shadow-md hover:shadow-yellow-500/40 transition-all duration-300">
+              <div className="p-3">
+                <div className="h-[250px] sm:h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis dataKey="month" stroke="#D1D5DB" />
+                      <YAxis stroke="#D1D5DB" />
+                      <Tooltip contentStyle={{ backgroundColor: "#1F2937", color: "#F9FAFB", border: '1px solid #FBBF24' }} />
+                      <Legend wrapperStyle={{ color: "#F9FAFB" }} />
+                      <Line type="monotone" dataKey="internships" stroke="#FBBF24" strokeWidth={2} activeDot={{ r: 6 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </div>
           )}
         </Slider>
@@ -107,4 +130,3 @@ const Report = () => {
 };
 
 export default Report;
-

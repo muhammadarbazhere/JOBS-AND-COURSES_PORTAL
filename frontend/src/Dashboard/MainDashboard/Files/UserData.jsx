@@ -7,39 +7,40 @@ const UserData = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const token = useSelector((state) => state.auth.token); // ✅ Get token from Redux
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/route/allUsers`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // ✅ Correct way
-            },
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setUsers(data.users);
-        } else {
-          throw new Error("Failed to fetch user data");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    if (!token) {
+      console.warn("No token - skipping user data API call");
+      return;
+    }
     fetchData();
   }, [token]);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/route/allUsers`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error(`Failed to fetch user data`);
+      const data = await response.json();
+      setUsers(data.users);
+    } catch (error) {
+      console.error("Error fetching user data:", error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleRoleChange = async (userId, newRole) => {
     const user = users.find((u) => u._id === userId);
@@ -55,79 +56,88 @@ const UserData = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // ✅ Auth header added
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ userId, newRole }),
         }
       );
 
-      if (response.ok) {
-        const updatedUser = await response.json();
-        setUsers((prev) =>
-          prev.map((u) => (u._id === userId ? updatedUser.user : u))
-        );
-      } else {
-        throw new Error("Failed to update user role");
-      }
+      if (!response.ok) throw new Error("Failed to update user role");
+      const updatedUser = await response.json();
+      setUsers((prev) =>
+        prev.map((u) => (u._id === userId ? updatedUser.user : u))
+      );
     } catch (error) {
-      console.error("Error updating user role:", error);
+      console.error("Error updating user role:", error.message);
       setError(error.message);
     }
   };
 
   return (
-    <div className="ml-24 sm:ml-56 h-dvh">
-      <div className="bg-blue-100 mt-8 p-4 font-[Chivo]">
-        <div className="font-bold text-lg flex gap-1 items-center">
-          <FaClipboardUser size={20} />
-          <h1>All Users</h1>
+    <div className="ml-4 sm:ml-56 px-4 py-6 min-h-screen bg-gray-900 text-gray-200 font-[Chivo]">
+      <div className="bg-gray-800 rounded-xl shadow-lg p-6">
+        {/* Header */}
+        <div className="flex items-center gap-2 mb-4">
+          <FaClipboardUser size={20} className="text-yellow-400" />
+          <h1 className="text-lg sm:text-2xl font-bold tracking-wide">
+            All Users
+          </h1>
         </div>
 
-        {loading && <p>Loading...</p>}
+        {/* Loading / Error */}
+        {loading && <p className="text-blue-400">Loading users...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
-        <table className="w-full mt-4">
-          <thead>
-            <tr className="bg-gray-200 text-center font-bold">
-              <th className="p-2">NAME</th>
-              <th className="p-2">EMAIL</th>
-              <th className="p-2">ROLE</th>
-              <th className="p-2">ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user._id} className="bg-white text-center">
-                <td className="p-2">{`${user.firstName} ${user.lastName}`}</td>
-                <td className="p-2">{user.email}</td>
-                <td className="p-2">
-                  <button
-                    className={`w-24 p-2 rounded cursor-default ${
-                      user.role === "admin"
-                        ? "border-green-500 border"
-                        : "border-blue-500 border"
-                    } text-black`}
-                  >
-                    {user.role}
-                  </button>
-                </td>
-                <td className="p-2">
-                  <button
-                    onClick={() =>
-                      handleRoleChange(
-                        user._id,
-                        user.role === "admin" ? "user" : "admin"
-                      )
-                    }
-                    className="bg-yellow-500 hover:bg-yellow-700 duration-700 text-white p-2 w-28 rounded"
-                  >
-                    Make {user.role === "admin" ? "user" : "admin"}
-                  </button>
-                </td>
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm sm:text-base border-collapse rounded-lg">
+            <thead>
+              <tr className="bg-gray-700 text-gray-100">
+                <th className="p-3 text-left">NAME</th>
+                <th className="p-3 text-left">EMAIL</th>
+                <th className="p-3 text-left">ROLE</th>
+                <th className="p-3 text-left">ACTIONS</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr
+                  key={user._id}
+                  className="hover:bg-gray-700 transition duration-300 ease-in-out"
+                >
+                  <td className="p-3 whitespace-nowrap">
+                    {`${user.firstName} ${user.lastName}`}
+                  </td>
+                  <td className="p-3 whitespace-nowrap">{user.email}</td>
+                  <td className="p-3">
+                    <span
+                      className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                        user.role === "admin"
+                          ? "bg-green-600 text-green-100"
+                          : "bg-blue-600 text-blue-100"
+                      }`}
+                    >
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <button
+                      onClick={() =>
+                        handleRoleChange(
+                          user._id,
+                          user.role === "admin" ? "user" : "admin"
+                        )
+                      }
+                      className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-medium px-3 py-1 rounded-lg transition duration-300 ease-in-out"
+                    >
+                      Make {user.role === "admin" ? "User" : "Admin"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

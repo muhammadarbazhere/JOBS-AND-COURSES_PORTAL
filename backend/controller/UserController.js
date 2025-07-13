@@ -35,6 +35,8 @@ const signup = async (req, res) => {
     }
     const image = req.file.path;
 
+
+
     const exists = await User.findOne({ email });
     if (exists) {
       return res.status(400).json({ message: "User already exists!" });
@@ -122,6 +124,7 @@ const login = async (req, res) => {
 // ✅ Verify Token (No cookies, token from headers)
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
+
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Unauthorized: No token provided" });
   }
@@ -133,10 +136,19 @@ const verifyToken = (req, res, next) => {
     req.userId = user.id;
     next();
   } catch (err) {
-    console.error("Token verification error:", err);
-    return res.status(401).json({ message: "Unauthorized: Invalid token" });
+    if (err.name === "TokenExpiredError") {
+      console.error("❌ Token expired:", err.expiredAt);
+      return res.status(401).json({ message: "Token expired. Please login again." });
+    } else if (err.name === "JsonWebTokenError") {
+      console.error("❌ Invalid token:", err.message);
+      return res.status(401).json({ message: "Invalid token. Please login again." });
+    } else {
+      console.error("❌ Token verification error:", err);
+      return res.status(401).json({ message: "Unauthorized: Token verification failed." });
+    }
   }
 };
+
 
 // ✅ Update User Role
 const updateUserRole = async (req, res) => {
@@ -235,6 +247,156 @@ const logout = async (req, res) => {
   }
 };
 
+
+
+
+
+// ✅ Forgot Password - Send Verification Code
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Email not found" });
+    }
+
+    // Generate 6-digit random code
+    const verificationCode = Math.floor(100000 + Math.random() * 900000);
+
+    // Save code and expiry (10 min) in user document
+    user.resetCode = verificationCode;
+    user.resetCodeExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+    await user.save();
+
+    // Send code to user's email
+    const mailOptions = {
+      from: process.env.EMAIL_ADMIN,
+      to: email,
+      subject: "Password Reset Verification Code",
+      text: `Your verification code for password reset is: ${verificationCode}\n\nThis code will expire in 10 minutes.`,
+    };
+
+    transporter.sendMail(mailOptions, (error) => {
+      if (error) {
+        console.error("Error sending reset code email:", error);
+        return res.status(500).json({ message: "Failed to send email" });
+      }
+    });
+
+    res.status(200).json({ message: "Verification code sent to email" });
+  } catch (error) {
+    console.error("Error in forgotPassword:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+// ✅ Reset Password
+const resetPassword = async (req, res) => {
+  const { email, verificationCode, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user || !user.resetCode || !user.resetCodeExpiry) {
+      return res.status(400).json({ message: "No reset request found" });
+    }
+
+  if (String(user.resetCode) !== String(verificationCode)) {
+      return res.status(400).json({ message: "Invalid verification code" });
+    }
+
+    if (Date.now() > user.resetCodeExpiry) {
+      user.resetCode = undefined;
+      user.resetCodeExpiry = undefined;
+      await user.save();
+      return res.status(400).json({ message: "Verification code expired" });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    user.resetCode = undefined;
+    user.resetCodeExpiry = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    console.error("Error in resetPassword:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// ✅ Verify Reset Code
+// ✅ Verify Reset Code
+const verifyCode = async (req, res) => {
+  const { email, resetCode } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user || !user.resetCode || !user.resetCodeExpiry) {
+      console.log("❌ No reset request found for email:", email);
+      return res.status(400).json({ message: "No reset request found" });
+    }
+
+    if (String(user.resetCode) !== String(resetCode)) {
+      console.log(`❌ Invalid code: sent ${resetCode}, expected ${user.resetCode}`);
+      return res.status(400).json({ message: "Invalid verification code" });
+    }
+
+    if (Date.now() > user.resetCodeExpiry) {
+      user.resetCode = undefined;
+      user.resetCodeExpiry = undefined;
+      await user.save();
+      console.log("❌ Code expired");
+      return res.status(400).json({ message: "Verification code expired" });
+    }
+
+    console.log("✅ Verification successful for email:", email);
+    return res.status(200).json({ message: "Verification successful" });
+  } catch (error) {
+    console.error("Error in verifyCode:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+// ✅ Update Profile
+const updateProfile = async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Update fields
+    user.firstName = req.body.firstName || user.firstName;
+    user.lastName = req.body.lastName || user.lastName;
+
+    // If a new image is uploaded, replace the old one
+    if (req.file) {
+      user.image = req.file.path;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (err) {
+    console.error("Error in updateProfile:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+
+
 module.exports = {
   signup,
   login,
@@ -244,4 +406,10 @@ module.exports = {
   getAllUsers,
   logout,
   upload,
+  
+  forgotPassword,
+  resetPassword,
+  verifyCode,
+
+  updateProfile
 };

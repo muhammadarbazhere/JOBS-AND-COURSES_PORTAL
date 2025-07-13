@@ -68,15 +68,15 @@ const CoursesTable = () => {
       </h1>
 
       <div className="flex justify-end text-sm sm:text-xl font-bold mr-1">
-        <a
-          href="/MyAddCourse"
+        <Link
+          to="/MyAddCourse"
           className="cursor-pointer bg-white hover:bg-blue-400 hover:text-white border px-2 flex py-2 mb-4 border-blue-400 text-blue-400 items-center justify-center rounded-lg duration-700"
         >
           Add Courses
           <span className="text-red-300 mx-2">
             <MdAddCircle />
           </span>
-        </a>
+        </Link>
       </div>
 
       {loading && <p className="text-center">Loading...</p>}

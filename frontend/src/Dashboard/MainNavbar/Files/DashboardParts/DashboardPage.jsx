@@ -23,6 +23,10 @@ function DashboardPage() {
     setIsDropdownOpen(prevState => !prevState);
   };
 
+  const closeDropdown = () => {
+    setIsDropdownOpen(false);
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       <p
@@ -31,16 +35,14 @@ function DashboardPage() {
         type="button"
         onClick={toggleDropdown}
       >
-        <MdDashboardCustomize size={20} className="" />
+        <MdDashboardCustomize size={20} />
         <span>Dashboard</span>
       </p>
 
       {/* Dropdown menu */}
       <div
         id="dropdownHover"
-        className={`absolute top-full left-0 z-10 ${
-          isDropdownOpen ? "" : "hidden"
-        } divide-y divide-gray-100 bg-white rounded-lg shadow w-60 dark:bg-gray-700`}
+        className={`absolute top-full left-0 z-10 ${isDropdownOpen ? "" : "hidden"} divide-y divide-gray-100 bg-white rounded-lg shadow w-60 dark:bg-gray-700`}
       >
         <ul
           className="py-1 text-md text-gray-700 font-[Chivo] dark:text-gray-200"
@@ -49,6 +51,7 @@ function DashboardPage() {
           <li>
             <Link
               to="/MyAddJobs"
+              onClick={closeDropdown}
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Add Job/Internship
@@ -58,6 +61,7 @@ function DashboardPage() {
           <li>
             <Link
               to="/MyAddCourse"
+              onClick={closeDropdown}
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Add New Course
@@ -67,6 +71,7 @@ function DashboardPage() {
           <li>
             <Link
               to="/MyJobsList"
+              onClick={closeDropdown}
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Jobs /Internship List
@@ -76,6 +81,7 @@ function DashboardPage() {
           <li>
             <Link
               to="/MyCourseList"
+              onClick={closeDropdown}
               className="block px-4 py-2 hover:bg-blue-400 hover:text-white hover:transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Courses List

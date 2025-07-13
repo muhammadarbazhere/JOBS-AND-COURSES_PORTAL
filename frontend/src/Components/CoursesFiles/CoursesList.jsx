@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { FaArrowTrendUp } from 'react-icons/fa6';
 import { useSelector } from 'react-redux';
+import { motion } from 'framer-motion'; // ✅ Added framer-motion
 
 function Courses() {
   const token = useSelector((state) => state.auth.token);
@@ -36,7 +37,6 @@ function Courses() {
     }
   };
 
-  // ✅ Add to Cart Handler (with token)
   const handleAddToCart = async (course) => {
     if (!token) {
       toast.error('Please login to add items to cart');
@@ -50,7 +50,7 @@ function Courses() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // ✅ Add token here
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ courseId: course._id }),
         }
@@ -69,7 +69,6 @@ function Courses() {
     }
   };
 
-  // ✅ Pagination
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentCourses = courses.slice(indexOfFirstPost, indexOfLastPost);
@@ -77,7 +76,24 @@ function Courses() {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="font-[Chivo] bg-blue-100 px-4 lg:px-6 xl:px-20">
+    <motion.div
+      className="font-[Chivo] bg-blue-100 px-4 py-10 lg:px-6 xl:px-20"
+      initial={{ opacity: 0, x: -100 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+    >
+      <motion.div
+        className="w-full space-y-1 pb-10 flex flex-col items-center text-center md:px-2"
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2, duration: 0.7 }}
+      >
+        <p className="font-[Chivo] text-md sm:text-lg text-[#272727]">LEARN</p>
+        <h1 className="font-[Comfortaa] mb-2 font-bold text-2xl sm:text-3xl text-[#272727]">
+          Our Featured Courses
+        </h1>
+      </motion.div>
+
       {loading && (
         <div className="flex items-center justify-center mt-10">
           <div className="w-6 h-6 mr-3 border-t-2 border-b-2 border-gray-500 rounded-full animate-spin"></div>
@@ -99,14 +115,30 @@ function Courses() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 my-3">
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 my-3"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            visible: {
+              transition: {
+                staggerChildren: 0.15, // ✅ Stagger animation for each card
+              },
+            },
+          }}
+        >
           {currentCourses.map((course) => (
-            <div
+            <motion.div
               key={course._id}
               className="w-full sm:max-w-sm rounded-md overflow-hidden bg-white mb-6 border-2 border-white shadow-lg transform transition-all hover:scale-105"
+              variants={{
+                hidden: { opacity: 0, x: -50 },
+                visible: { opacity: 1, x: 0 },
+              }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
             >
               <img
-                src={`${import.meta.env.VITE_API_BASE_URL}/${course.image}`}
+                src={`${import.meta.env.VITE_API_BASE_URL}/route/${course.image}`}
                 className="w-full h-64 object-cover"
                 alt={course.title}
               />
@@ -138,9 +170,9 @@ function Courses() {
                   Add To Cart
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
 
       {/* ✅ Pagination */}
@@ -184,7 +216,7 @@ function Courses() {
           <FaChevronRight />
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
