@@ -5,7 +5,7 @@ const Internships = () => {
   const [internships, setInternships] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
@@ -68,22 +68,22 @@ const Internships = () => {
 
       {!loading && !error && internships.length > 0 && (
         <div className="overflow-x-auto">
-          <table className="w-full rounded-lg">
+          <table className="w-full rounded-lg border border-gray-300">
             <thead>
               <tr>
                 <th className="hidden"></th>
-                <th className="text-left lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
+                <th className="text-left border border-gray-300 lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
                   <span className="block sm:hidden">TITLE</span>
                   <span className="hidden sm:block">INTERNSHIP TITLE</span>
                 </th>
-                <th className="text-left lg:px-2 px-2 py-4 text-xs sm:text-base text-gray-700">
+                <th className="text-left border border-gray-300 lg:px-2 px-2 py-4 text-xs sm:text-base text-gray-700">
                   DESCRIPTION
                 </th>
-                <th className="text-left lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
+                <th className="text-left border border-gray-300 lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
                   <span className="block sm:hidden">ISSUE</span>
                   <span className="hidden sm:block">ISSUE DATE</span>
                 </th>
-                <th className="text-left lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
+                <th className="text-left border border-gray-300 lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
                   <span className="block sm:hidden">STATUS</span>
                   <span className="hidden sm:block">INTERNSHIP STATUS</span>
                 </th>
@@ -95,21 +95,19 @@ const Internships = () => {
                   <td className="hidden">
                     <input type="checkbox" />
                   </td>
-                  <td className="text-left text-gray-500 lg:px-8 px-1 py-4 text-sm sm:text-base">
+                  <td className="text-left text-gray-500 border border-gray-300 lg:px-8 px-1 py-4 text-sm sm:text-base">
                     {item.title}
                   </td>
-                  <td className="text-left text-gray-500 lg:px-8 px-1 py-4 w-64 md:w-96 text-sm sm:text-base">
+                  <td className="text-left text-gray-500 border border-gray-300 lg:px-8 px-1 py-4 w-64 md:w-96 text-sm sm:text-base">
                     {item.description}
                   </td>
-                  <td className="text-left text-gray-500 lg:px-8 px-1 py-4 sm:w-28 md:w-48 text-sm sm:text-base">
+                  <td className="text-left text-gray-500 border border-gray-300 lg:px-8 px-1 py-4 sm:w-28 md:w-48 text-sm sm:text-base">
                     {formatDate(item.createdAt)}
                   </td>
                   <td
-                    className={`text-left ${
-                      item.status === 'active'
-                        ? 'text-green-500'
-                        : 'text-red-500'
-                    } lg:px-8 px-1 py-4 text-sm sm:text-base`}
+                    className={`text-left border border-gray-300 lg:px-8 px-1 py-4 text-sm sm:text-base ${
+                      item.status === 'active' ? 'text-green-500' : 'text-red-500'
+                    }`}
                   >
                     {item.status}
                   </td>

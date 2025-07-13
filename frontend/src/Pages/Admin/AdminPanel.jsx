@@ -17,7 +17,7 @@ function AdminPanel() {
 
       <div className="block sm:hidden  py-0  px-4  items-center justify-center">
         <div className="flex  space-x-4 items-center  ">
-          <div className="flex flex-wrap gap-5">
+          <div className="flex sm:flex-row flex-wrap gap-5">
             <DashboardPage />
             <Career />
             <ELearning />

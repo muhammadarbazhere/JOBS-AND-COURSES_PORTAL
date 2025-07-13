@@ -82,17 +82,7 @@ function Courses() {
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
     >
-      <motion.div
-        className="w-full space-y-1 pb-10 flex flex-col items-center text-center md:px-2"
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.2, duration: 0.7 }}
-      >
-        <p className="font-[Chivo] text-md sm:text-lg text-[#272727]">LEARN</p>
-        <h1 className="font-[Comfortaa] mb-2 font-bold text-2xl sm:text-3xl text-[#272727]">
-          Our Featured Courses
-        </h1>
-      </motion.div>
+     
 
       {loading && (
         <div className="flex items-center justify-center mt-10">

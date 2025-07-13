@@ -68,53 +68,51 @@ const Job = () => {
       {!loading && !error && jobs.length > 0 && (
         <>
           <table className="w-full rounded-lg">
-            <thead>
-              <tr>
-                <th className="hidden"></th>
-                <th className="text-left lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
-                  <span className="block sm:hidden">TITLE</span>
-                  <span className="hidden sm:block">JOB TITLE</span>
-                </th>
-                <th className="text-left lg:px-2 px-2 py-4 text-xs sm:text-base text-gray-700">
-                  DESCRIPTION
-                </th>
-                <th className="text-left lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
-                  <span className="block sm:hidden">ISSUE</span>
-                  <span className="hidden sm:block">ISSUE DATE</span>
-                </th>
-                <th className="text-left lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
-                  <span className="block sm:hidden">STATUS</span>
-                  <span className="hidden sm:block">JOB STATUS</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white">
-              {jobs.map((item) => (
-                <tr key={item._id}>
-                  <td className="hidden">
-                    <input type="checkbox" />
-                  </td>
-                  <td className="text-left text-gray-500 lg:px-8 px-1 py-4 text-sm sm:text-base">
-                    {item.title}
-                  </td>
-                  <td className="text-left text-gray-500 lg:px-8 px-1 py-4 w-64 md:w-96 text-sm sm:text-base">
-                    {item.description}
-                  </td>
-                  <td className="text-left text-gray-500 lg:px-8 px-1 py-4 sm:w-28 md:w-48 text-sm sm:text-base">
-                    {formatDate(item.createdAt)}
-                  </td>
-                  <td
-                    className={`text-left ${
-                      item.status === 'active'
-                        ? 'text-green-500'
-                        : 'text-red-500'
-                    } lg:px-8 px-1 py-4 text-sm sm:text-base`}
-                  >
-                    {item.status}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+         <thead>
+  <tr>
+    <th className="hidden"></th>
+    <th className="text-left border border-gray-300 lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
+      <span className="block sm:hidden">TITLE</span>
+      <span className="hidden sm:block">JOB TITLE</span>
+    </th>
+    <th className="text-left border border-gray-300 lg:px-2 px-2 py-4 text-xs sm:text-base text-gray-700">
+      DESCRIPTION
+    </th>
+    <th className="text-left border border-gray-300 lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
+      <span className="block sm:hidden">ISSUE</span>
+      <span className="hidden sm:block">ISSUE DATE</span>
+    </th>
+    <th className="text-left border border-gray-300 lg:px-2 px-1 py-4 text-xs sm:text-base text-gray-700">
+      <span className="block sm:hidden">STATUS</span>
+      <span className="hidden sm:block">JOB STATUS</span>
+    </th>
+  </tr>
+</thead>
+
+<tbody className="bg-white">
+  {jobs.map((item) => (
+    <tr key={item._id}>
+      <td className="hidden"></td>
+      <td className="text-left text-gray-500 border border-gray-300 lg:px-8 px-1 py-4 text-sm sm:text-base">
+        {item.title}
+      </td>
+      <td className="text-left text-gray-500 border border-gray-300 lg:px-8 px-1 py-4 w-64 md:w-96 text-sm sm:text-base">
+        {item.description}
+      </td>
+      <td className="text-left text-gray-500 border border-gray-300 lg:px-8 px-1 py-4 sm:w-28 md:w-48 text-sm sm:text-base">
+        {formatDate(item.createdAt)}
+      </td>
+      <td
+        className={`text-left border border-gray-300 lg:px-8 px-1 py-4 text-sm sm:text-base ${
+          item.status === 'active' ? 'text-green-500' : 'text-red-500'
+        }`}
+      >
+        {item.status}
+      </td>
+    </tr>
+  ))}
+</tbody>
+
           </table>
         </>
       )}

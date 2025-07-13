@@ -44,7 +44,7 @@ function Career() {
       {/* Dropdown menu */}
       <div
         id="dropdownHover"
-        className={`absolute top-full left-0 z-10 ${isDropdownOpen ? '' : 'hidden'} bg-white divide-y divide-gray-100 rounded-lg shadow w-56 dark:bg-gray-700`}
+        className={`absolute top-full left-0 z-10 ${isDropdownOpen ? '' : 'hidden'} bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700`}
       >
         <ul className="py-0 text-md text-gray-700 font-[Chivo] dark:text-gray-200" aria-labelledby="dropdownHoverButton">
           <li>

@@ -9,7 +9,7 @@ const AllJobs = () => {
   const [error, setError] = useState("");
   const [editId, setEditId] = useState(null);
 
-  const token = useSelector((state) => state.auth.token); // ✅ Get token from Redux
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
     fetchJobs();
@@ -39,6 +39,11 @@ const AllJobs = () => {
   };
 
   const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this job?"
+    );
+    if (!confirmDelete) return; // 👈 Stop if cancelled
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/route/jobs-internships/delete/${id}`,
@@ -106,11 +111,11 @@ const AllJobs = () => {
   };
 
   return (
-    <div className="font-[Chivo] w-full ">
+    <div className="font-[Chivo] px-2 sm:px-6 lg:px-12 py-6 min-h-screen bg-blue-50">
       {loading && (
         <div className="flex items-center justify-center mt-10">
-          <div className="w-6 h-6 mr-3 border-t-2 border-b-2 border-gray-500 rounded-full animate-spin"></div>
-          <p>Loading...</p>
+          <div className="w-6 h-6 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+          <p className="ml-2 text-blue-500">Loading...</p>
         </div>
       )}
       {error && (
@@ -119,114 +124,106 @@ const AllJobs = () => {
         </p>
       )}
       {!loading && !error && jobs.length === 0 && (
-        <p className="text-center mt-3">No jobs available.</p>
+        <p className="text-center mt-3 text-gray-600">No jobs available.</p>
       )}
-      {!loading && !error && jobs.length > 0 && (
-        <table className="w-full">
-          <thead>
-            <tr>
-              <th>Job Title</th>
-              <th>Description</th>
-              <th>Issue Date</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {jobs.map((item) => (
-              <tr key={item._id}>
-                <td>
-                  {editId === item._id ? (
-                    <input
-                      name="title"
-                      value={item.title}
-                      onChange={(e) => handleChange(e, item._id)}
-                      className="border p-1"
-                    />
-                  ) : (
-                    item.title
-                  )}
-                </td>
-                <td>
-                  {editId === item._id ? (
-                    <textarea
-                      name="description"
-                      value={item.description}
-                      onChange={(e) => handleChange(e, item._id)}
-                      className="border p-1"
-                    />
-                  ) : (
-                    item.description
-                  )}
-                </td>
-                <td>{formatDate(item.createdAt)}</td>
-                <td>
-                  {editId === item._id ? (
-                    <select
-                      name="jobOrInternship"
-                      value={item.jobOrInternship}
-                      onChange={(e) => handleChange(e, item._id)}
-                      className="border p-1"
-                    >
-                      <option value="job">Job</option>
-                      <option value="internship">Internship</option>
-                    </select>
-                  ) : (
-                    item.jobOrInternship
-                  )}
-                </td>
-                <td>
-                  {editId === item._id ? (
-                    <select
-                      name="status"
-                      value={item.status}
-                      onChange={(e) => handleChange(e, item._id)}
-                      className="border p-1"
-                    >
-                      <option value="active">Active</option>
-                      <option value="closed">Closed</option>
-                    </select>
-                  ) : (
-                    item.status
-                  )}
-                </td>
-                <td className="flex gap-2">
-                  {editId === item._id ? (
-                    <>
-                      <button
-                        onClick={() => handleSave(item._id)}
-                        className="bg-blue-500 text-white p-2 rounded"
-                      >
-                        <IoMdSend />
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="bg-gray-300 p-2 rounded"
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => handleEdit(item._id)}
-                      className="bg-blue-500 text-white p-2 rounded"
-                    >
-                      <MdModeEdit />
-                    </button>
-                  )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {jobs.map((item) => (
+          <div
+            key={item._id}
+            className="bg-white rounded-lg shadow border border-gray-200 p-4"
+          >
+            {editId === item._id ? (
+              <>
+                <input
+                  name="title"
+                  value={item.title}
+                  onChange={(e) => handleChange(e, item._id)}
+                  className="border p-1 mb-2 w-full"
+                  placeholder="Job Title"
+                />
+                <textarea
+                  name="description"
+                  value={item.description}
+                  onChange={(e) => handleChange(e, item._id)}
+                  className="border p-1 mb-2 w-full"
+                  placeholder="Description"
+                />
+                <select
+                  name="jobOrInternship"
+                  value={item.jobOrInternship}
+                  onChange={(e) => handleChange(e, item._id)}
+                  className="border p-1 mb-2 w-full"
+                >
+                  <option value="job">Job</option>
+                  <option value="internship">Internship</option>
+                </select>
+                <select
+                  name="status"
+                  value={item.status}
+                  onChange={(e) => handleChange(e, item._id)}
+                  className="border p-1 mb-2 w-full"
+                >
+                  <option value="active">Active</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </>
+            ) : (
+              <>
+                <p className="font-bold text-gray-800 mb-1">{item.title}</p>
+                <p className="text-gray-600 mb-1">{item.description}</p>
+                <p className="text-gray-600 mb-1">
+                  <strong>Type:</strong> {item.jobOrInternship}
+                </p>
+                <p className="text-gray-600 mb-1">
+                  <strong>Issue Date:</strong> {formatDate(item.createdAt)}
+                </p>
+                <p
+                  className={`font-semibold ${
+                    item.status === "active" ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {item.status}
+                </p>
+              </>
+            )}
+
+            <div className="flex gap-2 mt-2">
+              {editId === item._id ? (
+                <>
+                  <button
+                    onClick={() => handleSave(item._id)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                  >
+                    <IoMdSend />
+                  </button>
+                  <button
+                    onClick={handleCancelEdit}
+                    className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => handleEdit(item._id)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                  >
+                    <MdModeEdit />
+                  </button>
                   <button
                     onClick={() => handleDelete(item._id)}
-                    className="bg-red-500 text-white p-2 rounded"
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                   >
                     <MdDelete />
                   </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -41,7 +41,7 @@ function ELearning() {
 
       <div
         id="dropdownHover"
-        className={`absolute top-full -left-10 sm:left-0 z-10 ${isDropdownOpen ? "" : "hidden"} bg-white divide-y divide-gray-100 rounded-lg w-56 sm:shadow sm:w-60`}
+        className={`absolute top-full  -right-24 sm:right-0  z-10 ${isDropdownOpen ? "" : "hidden"} bg-white divide-y divide-gray-100 rounded-lg w-56 sm:shadow sm:w-60`}
       >
         <ul
           className="py-1 text-md text-gray-700 font-[Chivo] "
