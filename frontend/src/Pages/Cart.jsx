@@ -107,7 +107,7 @@ function Cart() {
   };
 
   return (
-    <div className="bg-blue-100 h-dvh pb-10">
+    <div className="bg-blue-100 min-h-screen pb-10">
       <div className="font-[Chivo] py-10 px-4 lg:px-6 xl:px-20">
         <div className="w-full space-y-1 mb-2 flex flex-col items-start md:px-2">
           <p className="font-[Chivo] text-md mb-4 font-bold sm:text-3xl text-[#272727]">
