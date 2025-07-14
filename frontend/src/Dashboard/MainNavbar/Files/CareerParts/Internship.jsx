@@ -35,14 +35,14 @@ function  Internship() {
   return (
     <div className='w-full h-full px-1 sm:px-4 md:px-10 lg:px-24 py-10 font-[Chivo] bg-blue-100'>
       <h1 className="text-center text-4xl  text-transparent bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text font-bold">Intern Table</h1>
-      <div className="mt-4 flex justify-center">
+      {/* <div className="mt-4 flex justify-center">
         <input
           type="text"
           placeholder="Search internships here"
           className="border border-gray-300 rounded-md px-4 py-2 mb-10"
           ref={searchInputRef} 
         />
-      </div>
+      </div> */}
 
       <div className="mt-4 flex justify-between  pb-12 ">
 
